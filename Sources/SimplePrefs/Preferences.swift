@@ -25,34 +25,7 @@ import Foundation
 
 /// Base protocol for preferences
 protocol Preferences: Codable {
-	
-	static var shared: Self { get set }
-	
 	init()
-	
+	@discardableResult
 	func save() -> Bool
-	func synchronize()
-	mutating func saving(_ closure: (inout Self) -> Void)
-	mutating func synchronizing(_ closure: (inout Self) -> Void)
-	
-	static func _loadedPreferences() -> Self?
-}
-
-extension Preferences {
-
-	/// Saves preferences and loads them
-	func synchronize() {
-		_ = save()
-		Self.shared = Self._loadedPreferences() ?? .init()
-	}
-	
-	mutating func saving(_ closure: (inout Self) -> Void) {
-		closure(&self)
-		_ = save()
-	}
-	
-	mutating func synchronizing(_ closure: (inout Self) -> Void) {
-		closure(&self)
-		synchronize()
-	}
 }

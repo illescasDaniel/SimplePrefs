@@ -8,23 +8,23 @@ Simple, easy and fast preferences for your Swift projects.
 
 **Note:** you can find full usage examples in the `Tests` folder.
 
-To use this library, you must create a `struct` which implements one of the following protocols:
+To use this library, you must create a `struct` which implements the `Preferences` protocol and one of the following protocols too:
 - `FilePreferences` (saves preferences as a plain JSON file), 
 - `EncryptedFilePreferences` (saves preferences as en encrypted JSON file) or 
 - `UserDefaultsPreferences` (saves preferences in the UserDefaults)
 
 In this struct you just need to:
 - Declare all the properties (must conform to Codable protocol) that you want to save.
-- Declare a `shared` property with this default value: `_loadedPreferences() ?? .init()`, that is, the loaded preferences (either from disk or other source) or if there are no previous preferences saved, a new clean instance is created.
+- Declare a `shared` property with this default value: `Self.loaded() ?? Self()`, that is, an instance with loaded preferences (either from disk or other source) or if there are no previous preferences saved, a new clean instance is created.
 - (Only for encrypted prefs.) Declare a `dataKey: Data` property, containing the 256bits key used for encryption.
 - (Only necessary for user defaults) Declare a `CodingKeys` enum conforming to `String, CodingKey, CaseIterable` with the user preferences keys.
 
 **Example:**
 
 ```swift
-struct FilePreferencesExample: FilePreferences {
+struct FilePreferencesExample: Preferences, FilePreferences {
 	
-	static var shared: Self = _loadedPreferences() ?? .init()
+	static var shared: Self = Self.loaded() ?? Self()
 	
 	// MARK: Properties
 	
@@ -46,3 +46,5 @@ FilePreferencesExample.shared.save()
 // and/or `func applicationWillTerminate(UIApplication)`.
 // The `save` method persists your current preferences object on disk (in this case)
 ```
+
+You can also have `mock` implementations of your preferences, see `AppFilePreferences.swift` file to see an actual example.

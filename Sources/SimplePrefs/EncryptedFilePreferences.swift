@@ -21,26 +21,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#if canImport(CryptoKit)
 import Foundation
-import CryptoKit
 
 /// Saves preferences as en encrypted JSON file
-protocol EncryptedFilePreferences: FilePreferences {
+protocol EncryptedFilePreferences {
+	static var fileName: String { get }
+	static var path: String? { get }
+	
 	static var dataKey: Data { get }
 }
-@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
+
 extension EncryptedFilePreferences {
-	
-	private static var key: SymmetricKey {
-		SymmetricKey(data: Self.dataKey)
-	}
 	
 	/// File name including extension
 	static var fileName: String {
 		return "\(Self.self).enc"
 	}
 	
+	/// Self-generated path. By default saves a file named YOUR_CLASS_NAME.json
+	static var path: String? {
+		FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+			.appendingPathComponent(Self.fileName)
+			.path
+	}
+}
+
+#if canImport(CryptoKit)
+import CryptoKit
+
+extension EncryptedFilePreferences {
+	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
+	private static var key: SymmetricKey {
+		SymmetricKey(data: Self.dataKey)
+	}
+}
+
+extension EncryptedFilePreferences where Self: Encodable {
+	
+	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 	@discardableResult
 	func save() -> Bool {
 		guard let encriptedData = try? JSONEncoder().encode(self), let path = Self.path else {
@@ -52,8 +70,12 @@ extension EncryptedFilePreferences {
 		}
 		return false
 	}
+}
+
+extension EncryptedFilePreferences where Self: Decodable {
 	
-	static func _loadedPreferences() -> Self? {
+	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
+	static func loaded() -> Self? {
 		if let path = Self.path,
 			let encryptedData = FileManager.default.contents(atPath: path),
 			let sealedBox = try? ChaChaPoly.SealedBox(combined: encryptedData),

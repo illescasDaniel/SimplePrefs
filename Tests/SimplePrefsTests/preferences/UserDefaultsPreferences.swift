@@ -8,9 +8,9 @@
 import Foundation
 @testable import SimplePrefs
 
-struct UserDefaultsPreferencesExample: UserDefaultsPreferences {
+struct UserDefaultsPreferencesExample: Preferences, UserDefaultsPreferences {
 	
-	static var shared: Self = _loadedPreferences() ?? .init()
+	static var shared: Self = Self.loaded() ?? Self()
 	
 	enum CodingKeys: String, CodingKey, CaseIterable {
 		case age

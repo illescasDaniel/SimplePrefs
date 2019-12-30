@@ -3,9 +3,9 @@ import XCTest
 
 final class SimplePrefsTests: XCTestCase {
 	
-	var filePrefs: FilePreferencesExample {
-		get { .shared }
-		set { FilePreferencesExample.shared = newValue }
+	var filePrefs: AppFilePreferences {
+		get { AppFilePreferencesManager.shared }
+		set { AppFilePreferencesManager.shared = newValue }
 	}
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 	var encryptedFilePrefs: EncryptedFilePreferencesExample {
@@ -84,29 +84,34 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(userDefaultsPrefs.person, person)
 	}
 	
-	func testSaveFilePreferences() {
+	func testSavePreferencesAndLoad() {
 		
 		filePrefs.save()
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
 			encryptedFilePrefs.save()
 		}
+		userDefaultsPrefs.save()
 		
-		XCTAssertNotNil(FilePreferencesExample.path)
-		XCTAssertTrue(FileManager.default.fileExists(atPath: FilePreferencesExample.path!))
+		let defaultFilePrefs = (filePrefs as! DefaultAppFilePreferences)
+		let path = (type(of: defaultFilePrefs).path)
+		XCTAssertNotNil(path)
+		XCTAssertTrue(FileManager.default.fileExists(atPath: path!))
 		
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
 			XCTAssertNotNil(EncryptedFilePreferencesExample.path)
 			XCTAssertTrue(FileManager.default.fileExists(atPath: EncryptedFilePreferencesExample.path!))
 		}
+		
+		newValuesAfterLoad()
 	}
 	
-	func testNewValuesAfterLoad() {
+	private func newValuesAfterLoad() {
 		
-		filePrefs.synchronize()
+		filePrefs = DefaultAppFilePreferences.loaded() ?? .init()
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			encryptedFilePrefs.synchronize()
+			encryptedFilePrefs = EncryptedFilePreferencesExample.loaded() ?? .init()
 		}
-		userDefaultsPrefs.synchronize()
+		userDefaultsPrefs = UserDefaultsPreferencesExample.loaded() ?? .init()
 		
 		let newAge: Int = 100
 		let isDark = true
@@ -134,7 +139,6 @@ final class SimplePrefsTests: XCTestCase {
 	static var allTests = [
 		("testDefaultValues", testDefaultValues),
 		("testNewValues", testNewValues),
-		("testSaveFilePreferences", testSaveFilePreferences),
-		("testNewValuesAfterLoad", testNewValuesAfterLoad)
+		("testSavePreferencesAndLoad", testSavePreferencesAndLoad)
 	]
 }

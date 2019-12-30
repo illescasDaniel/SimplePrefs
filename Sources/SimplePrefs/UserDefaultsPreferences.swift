@@ -24,14 +24,15 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences in the UserDefaults
-protocol UserDefaultsPreferences: Preferences {
+protocol UserDefaultsPreferences {
 	associatedtype CodingKeys: CaseIterable, RawRepresentable where CodingKeys.RawValue == String
 	static var userDefaults: UserDefaults { get }
 }
 extension UserDefaultsPreferences {
-	
 	static var userDefaults: UserDefaults { .standard }
-	
+}
+
+extension UserDefaultsPreferences where Self: Encodable {
 	@discardableResult
 	func save() -> Bool {
 		guard let data = try? JSONEncoder().encode(self) else {
@@ -45,8 +46,10 @@ extension UserDefaultsPreferences {
 		}
 		return false
 	}
-	
-	static func _loadedPreferences() -> Self? {
+}
+
+extension UserDefaultsPreferences where Self: Decodable {
+	static func loaded() -> Self? {
 		let userDefaultsDictionary = Self.userDefaults.dictionaryWithValues(forKeys: CodingKeys.allCases.map { $0.rawValue })
 		if let data = try? JSONSerialization.data(withJSONObject: userDefaultsDictionary),
 			let instance = try? JSONDecoder().decode(Self.self, from: data) {

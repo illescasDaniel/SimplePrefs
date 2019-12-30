@@ -24,7 +24,7 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences as a plain JSON file
-protocol FilePreferences: Preferences {
+protocol FilePreferences {
 	static var fileName: String { get }
 	static var path: String? { get }
 }
@@ -41,7 +41,9 @@ extension FilePreferences {
 			.appendingPathComponent(Self.fileName)
 			.path
 	}
-	
+}
+
+extension FilePreferences where Self: Encodable {
 	@discardableResult
 	func save() -> Bool {
 		guard let data = try? JSONEncoder().encode(self), let path = Self.path else {
@@ -49,8 +51,10 @@ extension FilePreferences {
 		}
 		return FileManager.default.createFile(atPath: path, contents: data, attributes: nil)
 	}
-	
-	static func _loadedPreferences() -> Self? {
+}
+
+extension FilePreferences where Self: Decodable {
+	static func loaded() -> Self? {
 		if let path = Self.path,
 			let data = FileManager.default.contents(atPath: path),
 			let instance = try? JSONDecoder().decode(Self.self, from: data) {
