@@ -1,13 +1,10 @@
 # SimplePrefs
 
+[![Swift version](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org/download)
+[![Version](https://img.shields.io/badge/version-1.0.1--beta-green.svg)](https://github.com/illescasDaniel/Questions/releases)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/illescasDaniel/SimplePrefs/blob/master/LICENSE)
+
 Simple, easy and fast preferences for your Swift projects.
-
-### Features
-- Saves to a plain JSON file
-- Saves to an encrypted (JSON) file (Using Apple's CryptoKit)
-- Saves in UserDefaults
-
-### Usage
 
 **Note:** you can find full usage examples in the `Tests` folder.
 
