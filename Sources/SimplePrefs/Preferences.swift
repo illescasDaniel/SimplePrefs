@@ -24,7 +24,7 @@ SOFTWARE.
 import Foundation
 
 /// Base protocol for preferences
-protocol Preferences: Codable {
+public protocol Preferences: Codable {
 	init()
 	@discardableResult
 	func save() -> Bool

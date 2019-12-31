@@ -24,11 +24,11 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences as a plain JSON file
-protocol FilePreferences {
+public protocol FilePreferences {
 	static var fileName: String { get }
 	static var path: String? { get }
 }
-extension FilePreferences {
+public extension FilePreferences {
 	
 	/// File name including extension
 	static var fileName: String {
@@ -43,7 +43,7 @@ extension FilePreferences {
 	}
 }
 
-extension FilePreferences where Self: Encodable {
+public extension FilePreferences where Self: Encodable {
 	@discardableResult
 	func save() -> Bool {
 		guard let data = try? JSONEncoder().encode(self), let path = Self.path else {
@@ -53,7 +53,7 @@ extension FilePreferences where Self: Encodable {
 	}
 }
 
-extension FilePreferences where Self: Decodable {
+public extension FilePreferences where Self: Decodable {
 	static func loaded() -> Self? {
 		if let path = Self.path,
 			let data = FileManager.default.contents(atPath: path),

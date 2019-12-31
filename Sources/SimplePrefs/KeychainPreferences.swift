@@ -24,18 +24,18 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences as a plain JSON file
-protocol KeychainPreferences {
+public protocol KeychainPreferences {
 	static var key: String { get }
 }
 
-extension KeychainPreferences {
+public extension KeychainPreferences {
 	@discardableResult
 	func delete() -> Bool {
 		return GenericPasswordStore().deleteKey(account: Self.key)
 	}
 }
 
-extension KeychainPreferences where Self: Encodable {
+public extension KeychainPreferences where Self: Encodable {
 	@discardableResult
 	func save() -> Bool {
 		guard let data = try? JSONEncoder().encode(self) else {
@@ -45,7 +45,7 @@ extension KeychainPreferences where Self: Encodable {
 	}
 }
 
-extension KeychainPreferences where Self: Decodable {
+public extension KeychainPreferences where Self: Decodable {
 	static func loaded() -> Self? {
 		if let data = GenericPasswordStore().readKey(account: Self.key),
 			let instance = try? JSONDecoder().decode(Self.self, from: data) {

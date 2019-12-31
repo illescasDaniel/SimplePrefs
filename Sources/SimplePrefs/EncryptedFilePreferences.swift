@@ -24,14 +24,14 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences as en encrypted JSON file
-protocol EncryptedFilePreferences {
+public protocol EncryptedFilePreferences {
 	static var fileName: String { get }
 	static var path: String? { get }
 	
 	static var dataKey: Data { get }
 }
 
-extension EncryptedFilePreferences {
+public extension EncryptedFilePreferences {
 	
 	/// File name including extension
 	static var fileName: String {
@@ -49,14 +49,14 @@ extension EncryptedFilePreferences {
 #if canImport(CryptoKit)
 import CryptoKit
 
-extension EncryptedFilePreferences {
+public extension EncryptedFilePreferences {
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 	private static var key: SymmetricKey {
 		SymmetricKey(data: Self.dataKey)
 	}
 }
 
-extension EncryptedFilePreferences where Self: Encodable {
+public extension EncryptedFilePreferences where Self: Encodable {
 	
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 	@discardableResult
@@ -72,7 +72,7 @@ extension EncryptedFilePreferences where Self: Encodable {
 	}
 }
 
-extension EncryptedFilePreferences where Self: Decodable {
+public extension EncryptedFilePreferences where Self: Decodable {
 	
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 	static func loaded() -> Self? {
