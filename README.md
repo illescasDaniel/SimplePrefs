@@ -10,12 +10,15 @@ A simple way to manage your app preferences in your Swift projects (compatible w
 
 To use this library, you must create a `struct` which implements the `Preferences` protocol and one of the following protocols too:
 - `FilePreferences` (saves preferences as a plain JSON file), 
-- `EncryptedFilePreferences` (saves preferences as en encrypted JSON file) or 
-- `UserDefaultsPreferences` (saves preferences in the UserDefaults)
+- `EncryptedFilePreferences` (saves preferences as en encrypted JSON file),
+- `KeychainPreferences` (saves preferences on user's keychain),
+- `UserDefaultsPreferences` (saves preferences using UserDefaults)
 
 In this struct you just need to:
 - Declare all the properties (must conform to Codable protocol) that you want to save.
 - Declare a `shared` property with this default value: `Self.loaded() ?? Self()`, that is, an instance with loaded preferences (either from disk or other source) or if there are no previous preferences saved, a new clean instance is created.
+
+- (Only for keychain prefs.) Declare a `key: String` property, containing a String key (like a key from a dictionary, just to identify it).
 - (Only for encrypted prefs.) Declare a `dataKey: Data` property, containing the 256bits key used for encryption.
 - (Only necessary for user defaults) Declare a `CodingKeys` enum conforming to `String, CodingKey, CaseIterable` with the user preferences keys.
 

@@ -25,11 +25,13 @@ import Foundation
 
 /// Saves preferences as a plain JSON file
 public protocol KeychainPreferences {
+	/// Like a key from a dictionary, just to identify the saved data
 	static var key: String { get }
 }
 
 public extension KeychainPreferences {
 	@discardableResult
+	/// Note: after deleting from keychain, is recomended to re-assign a new empty instance to your shared instance (MyPreferences.shared = .init())
 	func delete() -> Bool {
 		return GenericPasswordStore().deleteKey(account: Self.key)
 	}
