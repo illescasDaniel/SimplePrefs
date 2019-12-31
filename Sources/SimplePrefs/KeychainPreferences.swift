@@ -38,12 +38,25 @@ public extension KeychainPreferences {
 }
 
 public extension KeychainPreferences where Self: Encodable {
+	
 	@discardableResult
 	func save() -> Bool {
 		guard let data = try? JSONEncoder().encode(self) else {
 			return false
 		}
-		return GenericPasswordStore().storeKey(data, account: Self.key)
+		if GenericPasswordStore().storeKey(data, account: Self.key) == false {
+			return update()
+		} else {
+			return true
+		}
+	}
+	
+	@discardableResult
+	func update() -> Bool {
+		guard let data = try? JSONEncoder().encode(self) else {
+			return false
+		}
+		return GenericPasswordStore().updateKey(data, account: Self.key)
 	}
 }
 
