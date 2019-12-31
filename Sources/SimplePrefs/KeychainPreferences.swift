@@ -45,12 +45,13 @@ public extension KeychainPreferences where Self: Encodable {
 			return false
 		}
 		if GenericPasswordStore().storeKey(data, account: Self.key) == false {
-			return update()
+			return GenericPasswordStore().updateKey(data, account: Self.key)
 		} else {
 			return true
 		}
 	}
 	
+	/// Is not mandatory to call this method, since the `save` method will update the keychain values if there are previous ones
 	@discardableResult
 	func update() -> Bool {
 		guard let data = try? JSONEncoder().encode(self) else {
