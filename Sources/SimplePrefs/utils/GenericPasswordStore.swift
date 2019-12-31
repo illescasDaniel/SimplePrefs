@@ -36,25 +36,8 @@ struct GenericPasswordStore {
 	/// Updates a CryptoKit key in the keychain
 	@discardableResult
 	func updateKey(_ key: Data, account: String) -> Bool {
-		
-		// Treat the key data as a generic password.
-		var query = [
-			kSecClass: kSecClassGenericPassword,
-			kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked,
-		] as [String: Any]
-		
-		let attributes = [
-			kSecAttrAccount: account,
-			kSecValueData: key
-		] as [String: Any]
-		
-		if #available(OSX 10.15, iOS 13.0, *) {
-			query[kSecUseDataProtectionKeychain as String] = true
-		}
-		
-		// Add the key data.
-		let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
-		return status == errSecSuccess
+		deleteKey(account: account)
+		return storeKey(key, account: account)
 	}
 	
 	/// Reads a CryptoKit key from the keychain as a generic password.
