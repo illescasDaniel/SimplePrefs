@@ -16,6 +16,10 @@ final class SimplePrefsTests: XCTestCase {
 		get { .shared }
 		set { UserDefaultsPreferencesManager.shared = newValue }
 	}
+	var keychainPrefs: AppKeychainPreferencesManager {
+		get { .shared }
+		set { AppKeychainPreferencesManager.shared = newValue }
+	}
 	
 	//
 	
@@ -42,6 +46,10 @@ final class SimplePrefsTests: XCTestCase {
 			XCTAssertEqual(encryptedFilePrefs.person, Person(name: "John"))
 		}
 		XCTAssertEqual(userDefaultsPrefs.person, Person(name: "John"))
+		
+		XCTAssertEqual(keychainPrefs.userName, "guest")
+		XCTAssertEqual(keychainPrefs.password, nil)
+		XCTAssertEqual(keychainPrefs.randomThing, 12)
 	}
 	
 	func testNewValues() {
@@ -82,15 +90,24 @@ final class SimplePrefsTests: XCTestCase {
 			XCTAssertEqual(encryptedFilePrefs.person, person)
 		}
 		XCTAssertEqual(userDefaultsPrefs.person, person)
+		
+		keychainPrefs.userName = person.name
+		XCTAssertEqual(keychainPrefs.userName, person.name)
+		keychainPrefs.randomThing = newAge
+		XCTAssertEqual(keychainPrefs.randomThing, newAge)
+		keychainPrefs.password = "12344321"
+		XCTAssertEqual(keychainPrefs.password, "12344321")
 	}
 	
 	func testSavePreferencesAndLoad() {
 		
 		filePrefs.save()
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			encryptedFilePrefs.save()
+			XCTAssertTrue(encryptedFilePrefs.save())
 		}
-		userDefaultsPrefs.save()
+		XCTAssertTrue(userDefaultsPrefs.save())
+		// I don't think the keychain works in swift package manager tests
+		// XCTAssertTrue(keychainPrefs.save())
 		
 		let defaultFilePrefs = (filePrefs as! DefaultAppFilePreferencesManager)
 		let path = (type(of: defaultFilePrefs).path)
@@ -113,6 +130,9 @@ final class SimplePrefsTests: XCTestCase {
 		}
 		userDefaultsPrefs = UserDefaultsPreferencesManager.loaded() ?? .init()
 		
+		// I don't think the keychain works in swift package manager tests
+		// keychainPrefs = AppKeychainPreferencesManager.loaded() ?? .init()
+		
 		let newAge: Int = 100
 		let isDark = true
 		let person = Person(name: "Daniel")
@@ -134,6 +154,11 @@ final class SimplePrefsTests: XCTestCase {
 			XCTAssertEqual(encryptedFilePrefs.person, person)
 		}
 		XCTAssertEqual(userDefaultsPrefs.person, person)
+		
+		// I don't think the keychain works in swift package manager tests
+//		XCTAssertEqual(keychainPrefs.userName, person.name)
+//		XCTAssertEqual(keychainPrefs.randomThing, newAge)
+//		XCTAssertEqual(keychainPrefs.password, "12344321")
 	}
 	
 	static var allTests = [
