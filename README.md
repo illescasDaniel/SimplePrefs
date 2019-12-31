@@ -22,24 +22,24 @@ In this struct you just need to:
 **Example:**
 
 ```swift
-struct FilePreferencesExample: Preferences, FilePreferences {
+struct AppPreferencesManager: Preferences, FilePreferences {
 	
-	static var shared: Self = Self.loaded() ?? Self()
+    static var shared: Self = Self.loaded() ?? Self()
 	
-	// MARK: Properties
+    // MARK: Properties
 	
-	var age: Int?
-	var isDarkModeEnabled: Bool = false
-	var person: Person = .init(name: "John") // `Person` must conform to `Codable`
+    var age: Int?
+    var isDarkModeEnabled: Bool = false
+    var person: Person = .init(name: "John") // `Person` must conform to `Codable`
 }
 ```
 **Usage:**
 ```swift
 
-FilePreferencesExample.shared.isDarkMode = true
-print(FilePreferencesExample.shared.isDarkMode) // true
+AppPreferencesManager.shared.isDarkMode = true
+print(AppPreferencesManager.shared.isDarkMode) // true
 
-FilePreferencesExample.shared.save()
+AppPreferencesManager.shared.save()
 
 // On iOS you may call the `save` method in 
 // `func applicationDidEnterBackground(UIApplication)`
