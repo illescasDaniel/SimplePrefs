@@ -14,13 +14,13 @@ protocol AppFilePreferences: Preferences {
 	var person: Person { get set }
 }
 
-struct DefaultAppFilePreferences: AppFilePreferences, FilePreferences {
+struct DefaultAppFilePreferencesManager: AppFilePreferences, FilePreferences {
 	var age: Int?
 	var isDarkModeEnabled: Bool = false
 	var person: Person = .init(name: "John")
 }
 
-struct MockAppFilePreferencesImpl: AppFilePreferences {
+struct MockAppFilePreferencesManager: AppFilePreferences {
 	
 	func save() -> Bool { true }
 	
@@ -31,5 +31,5 @@ struct MockAppFilePreferencesImpl: AppFilePreferences {
 
 struct AppFilePreferencesManager {
 	static var shared: AppFilePreferences =
-		(DefaultAppFilePreferences.loaded() ?? .init()) // or: MockAppFilePreferencesImpl()
+		(DefaultAppFilePreferencesManager.loaded() ?? .init()) // or: MockAppFilePreferencesImpl()
 }

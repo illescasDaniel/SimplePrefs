@@ -8,20 +8,20 @@ final class SimplePrefsTests: XCTestCase {
 		set { AppFilePreferencesManager.shared = newValue }
 	}
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
-	var encryptedFilePrefs: EncryptedFilePreferencesExample {
+	var encryptedFilePrefs: EncryptedFilePreferencesManager {
 		get { .shared }
-		set { EncryptedFilePreferencesExample.shared = newValue }
+		set { EncryptedFilePreferencesManager.shared = newValue }
 	}
-	var userDefaultsPrefs: UserDefaultsPreferencesExample {
+	var userDefaultsPrefs: UserDefaultsPreferencesManager {
 		get { .shared }
-		set { UserDefaultsPreferencesExample.shared = newValue }
+		set { UserDefaultsPreferencesManager.shared = newValue }
 	}
 	
 	//
 	
 	func testDefaultValues() {
 		
-		UserDefaultsPreferencesExample.CodingKeys.allCases.map { $0.rawValue }.forEach { key in
+		UserDefaultsPreferencesManager.CodingKeys.allCases.map { $0.rawValue }.forEach { key in
 			UserDefaults.standard.removeObject(forKey: key)
 		}
 		
@@ -92,14 +92,14 @@ final class SimplePrefsTests: XCTestCase {
 		}
 		userDefaultsPrefs.save()
 		
-		let defaultFilePrefs = (filePrefs as! DefaultAppFilePreferences)
+		let defaultFilePrefs = (filePrefs as! DefaultAppFilePreferencesManager)
 		let path = (type(of: defaultFilePrefs).path)
 		XCTAssertNotNil(path)
 		XCTAssertTrue(FileManager.default.fileExists(atPath: path!))
 		
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertNotNil(EncryptedFilePreferencesExample.path)
-			XCTAssertTrue(FileManager.default.fileExists(atPath: EncryptedFilePreferencesExample.path!))
+			XCTAssertNotNil(EncryptedFilePreferencesManager.path)
+			XCTAssertTrue(FileManager.default.fileExists(atPath: EncryptedFilePreferencesManager.path!))
 		}
 		
 		newValuesAfterLoad()
@@ -107,11 +107,11 @@ final class SimplePrefsTests: XCTestCase {
 	
 	private func newValuesAfterLoad() {
 		
-		filePrefs = DefaultAppFilePreferences.loaded() ?? .init()
+		filePrefs = DefaultAppFilePreferencesManager.loaded() ?? .init()
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			encryptedFilePrefs = EncryptedFilePreferencesExample.loaded() ?? .init()
+			encryptedFilePrefs = EncryptedFilePreferencesManager.loaded() ?? .init()
 		}
-		userDefaultsPrefs = UserDefaultsPreferencesExample.loaded() ?? .init()
+		userDefaultsPrefs = UserDefaultsPreferencesManager.loaded() ?? .init()
 		
 		let newAge: Int = 100
 		let isDark = true

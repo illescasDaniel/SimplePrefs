@@ -9,7 +9,7 @@ import Foundation
 @testable import SimplePrefs
 
 @available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
-struct EncryptedFilePreferencesExample: Preferences, EncryptedFilePreferences {
+struct EncryptedFilePreferencesManager: Preferences, EncryptedFilePreferences {
 	
 	// 256 bit key / 32 bytes key / 32 UInt8 numbers or characters
 	// you can use 32 ASCII characters text or raw bytes using an array

@@ -8,7 +8,7 @@
 import Foundation
 @testable import SimplePrefs
 
-struct UserDefaultsPreferencesExample: Preferences, UserDefaultsPreferences {
+struct UserDefaultsPreferencesManager: Preferences, UserDefaultsPreferences {
 	
 	static var shared: Self = Self.loaded() ?? Self()
 	
