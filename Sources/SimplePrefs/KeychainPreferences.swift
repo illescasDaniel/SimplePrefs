@@ -30,8 +30,8 @@ public protocol KeychainPreferences {
 }
 
 public extension KeychainPreferences {
-	@discardableResult
 	/// Note: after deleting from keychain, is recomended to re-assign a new empty instance to your shared instance (MyPreferences.shared = .init())
+	@discardableResult
 	func delete() -> Bool {
 		return GenericPasswordStore().deleteKey(account: Self.key)
 	}
