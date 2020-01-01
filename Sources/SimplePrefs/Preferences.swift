@@ -35,7 +35,7 @@ public protocol SelfPreferences: Preferences {
 	static func loaded() -> Self?
 	static func loadedOrNew() -> Self
 }
-extension SelfPreferences {
+public extension SelfPreferences {
 	static func loadedOrNew() -> Self {
 		return Self.loaded() ?? Self.init()
 	}
