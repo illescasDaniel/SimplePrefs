@@ -9,7 +9,7 @@ import Foundation
 @testable import SimplePrefs
 
 @available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
-struct EncryptedFilePreferencesManager: Preferences, EncryptedFilePreferences {
+struct EncryptedFilePreferencesManager: EncryptedFilePreferences {
 	
 	// 256 bit key / 32 bytes key / 32 UInt8 numbers or characters
 	// you can use 32 ASCII characters text or raw bytes using an array
@@ -20,7 +20,7 @@ struct EncryptedFilePreferencesManager: Preferences, EncryptedFilePreferences {
 		6,7
 	])*/
 	
-	static var shared: Self = Self.loaded() ?? Self()
+	static var shared: Self = Self.loadedOrNew()
 	
 	// optional to override
 	static var fileName: String {

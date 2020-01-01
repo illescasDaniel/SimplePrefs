@@ -23,9 +23,20 @@ SOFTWARE.
 
 import Foundation
 
-/// Base protocol for preferences
+/// Base protocol for preferences, could be used in mock classes so they have all struct properties and a save method
 public protocol Preferences: Codable {
 	init()
 	@discardableResult
 	func save() -> Bool
+}
+
+/// Base protocol for SimplePrefs
+public protocol SelfPreferences: Preferences {
+	static func loaded() -> Self?
+	static func loadedOrNew() -> Self
+}
+extension SelfPreferences {
+	static func loadedOrNew() -> Self {
+		return Self.loaded() ?? Self.init()
+	}
 }

@@ -10,15 +10,17 @@ A simple way to manage your app preferences in your Swift projects (compatible w
 
 **Note:** you can find full usage examples in the `Tests` folder.
 
-To use this library, you must create a `struct` which implements the `Preferences` protocol and one of the following protocols too:
+To use this library, you must create a `struct` which implements one of the following protocols:
 - `FilePreferences` (saves preferences as a plain JSON file), 
 - `EncryptedFilePreferences` (saves preferences as en encrypted JSON file),
 - `KeychainPreferences` (saves preferences on user's keychain),
 - `UserDefaultsPreferences` (saves preferences using `UserDefaults`)
 
+You can also have `mock` implementations of your preferences, see `AppFilePreferences.swift` file to see an actual example; in that case you can use the generic `Preferences` protocol too.
+
 In this struct you just need to:
 - Declare all the properties (must conform to `Codable` protocol) that you want to save.
-- (singleton) Declare a static variable `shared` with this default value: `Self.loaded() ?? Self()`, that is, an instance with loaded preferences (either from disk or other source) or if there are no previous preferences saved, a new clean instance is created.
+- (singleton) Declare a static variable `shared` with this default value: `Self.loaded() ?? Self()` or `Self.loadedOrNew()`, that is, an instance with loaded preferences (either from disk or other source) or if there are no previous preferences saved, a new clean instance is created.
 
 - (Only for keychain prefs.) Declare a `key: String` property, containing a `String` key (like a key from a dictionary, just to identify it).
 - (Only for encrypted prefs.) Declare a `dataKey: Data` property, containing the 256bits key used for encryption.
@@ -50,8 +52,6 @@ AppPreferencesManager.shared.save()
 // and/or `func applicationWillTerminate(UIApplication)`.
 // The `save` method persists your current preferences object on disk (in this case)
 ```
-
-You can also have `mock` implementations of your preferences, see `AppFilePreferences.swift` file to see an actual example.
 
 ## Motivation
 

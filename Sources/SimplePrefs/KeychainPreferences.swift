@@ -24,7 +24,7 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences as a plain JSON file
-public protocol KeychainPreferences {
+public protocol KeychainPreferences: SelfPreferences {
 	/// Like a key from a dictionary, just to identify the saved data
 	static var key: String { get }
 }

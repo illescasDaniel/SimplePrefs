@@ -24,7 +24,7 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences as en encrypted JSON file
-public protocol EncryptedFilePreferences {
+public protocol EncryptedFilePreferences: SelfPreferences {
 	static var fileName: String { get }
 	static var path: String? { get }
 	

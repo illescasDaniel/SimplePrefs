@@ -24,7 +24,7 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences as a plain JSON file
-public protocol FilePreferences {
+public protocol FilePreferences: SelfPreferences {
 	static var fileName: String { get }
 	static var path: String? { get }
 }

@@ -24,7 +24,7 @@ SOFTWARE.
 import Foundation
 
 /// Saves preferences in the UserDefaults
-public protocol UserDefaultsPreferences {
+public protocol UserDefaultsPreferences: SelfPreferences {
 	associatedtype CodingKeys: CaseIterable, RawRepresentable where CodingKeys.RawValue == String
 	static var userDefaults: UserDefaults { get }
 }

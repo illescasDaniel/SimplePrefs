@@ -30,6 +30,5 @@ struct MockAppFilePreferencesManager: AppFilePreferences {
 }
 
 struct AppFilePreferencesManager {
-	static var shared: AppFilePreferences =
-		(DefaultAppFilePreferencesManager.loaded() ?? .init()) // or: MockAppFilePreferencesImpl()
+	static var shared: AppFilePreferences = DefaultAppFilePreferencesManager.loadedOrNew() // or: MockAppFilePreferencesManager()
 }

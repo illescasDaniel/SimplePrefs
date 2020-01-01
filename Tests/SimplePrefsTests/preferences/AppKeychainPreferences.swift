@@ -8,13 +8,13 @@
 import Foundation
 @testable import SimplePrefs
 
-struct AppKeychainPreferencesManager: Preferences, KeychainPreferences {
+struct AppKeychainPreferencesManager: KeychainPreferences {
 	
 	static var key: String {
 		"AKey1234"
 	}
 	
-	static var shared: Self = Self.loaded() ?? Self()
+	static var shared: Self = Self.loadedOrNew()
 	
 	// MARK: Properties
 	
