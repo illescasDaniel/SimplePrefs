@@ -29,7 +29,7 @@ In this struct you just need to:
 **Example:**
 
 ```swift
-struct AppPreferencesManager: Preferences, FilePreferences {
+struct AppPreferencesManager: FilePreferences {
 	
     static var shared: Self = Self.loaded() ?? Self()
 	
