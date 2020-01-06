@@ -38,6 +38,7 @@ final class SimplePrefsTests: XCTestCase {
 	}
 	
 	func testEncryptedFilePrefs() {
+		#if canImport(CryptoKit)
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
 			let prefs = SimplePrefs.EncryptedFile<UserPreferences>(
 				defaultValue: .init(),
@@ -67,6 +68,9 @@ final class SimplePrefsTests: XCTestCase {
 		} else {
 			print("EncryptedFilePreferencesManager not compatible")
 		}
+		#else
+		print("EncryptedFilePreferencesManager not compatible")
+		#endif
 	}
 	
 	func testUserDefaultPrefs() {
