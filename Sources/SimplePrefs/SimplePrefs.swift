@@ -7,17 +7,17 @@
 
 import Foundation
 
-enum SimplePrefs {
+public enum SimplePrefs {
 	
-	typealias File<T: Codable> = FilePreferencesManager<T>
-	typealias Keychain<T: Codable> = KeychainPreferencesManager<T>
-	typealias UserDefaults<T: CodableWithKeys> = UserDefaultsPreferencesManager<T>
+	typealias File = FilePreferencesManager
+	typealias Keychain = KeychainPreferencesManager
+	typealias UserDefaults = UserDefaultsPreferencesManager
 	
-	typealias Mock<T: Codable> = DefaultMockPreferencesManager<T>
+	typealias Mock = DefaultMockPreferencesManager
 }
 
 #if canImport(CryptoKit)
-extension SimplePrefs {
+public extension SimplePrefs {
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 	typealias EncryptedFile = EncryptedFilePreferencesManager
 }
