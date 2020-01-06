@@ -20,29 +20,31 @@ These are the preferences managers available right now:
 ```swift
 // The model
 struct UserPreferences: Codable {
-	var age: Int?
-	var isDarkModeEnabled: Bool = false
-	var person: Person = .init(name: "John")
+    var age: Int?
+    var isDarkModeEnabled: Bool = false
+    var person: Person = .init(name: "John") // must conform to `Codable`
 }
 
-// Only necessary for `UserDefaultsPreferencesManager`
+// Only necessary for `SimplePrefs.UserDefaults`
 extension UserPreferences: CodableWithKeys {
-	enum CodingKeys: String, CodingKey, CaseIterable {
-		case age
-		case isDarkModeEnabled
-		case person
-	}
+    enum CodingKeys: String, CodingKey, CaseIterable {
+        case age
+        case isDarkModeEnabled
+        case person
+    }
 }
 
 // The recommended preferences manager which uses a mock instance if runnning on a DEBUG executable
 enum AppFilePreferencesManager {
-	#if DEBUG
-	static let shared = SimplePrefs.Mock<UserPreferences>(
-		defaultValue: .init(age: 22, isDarkModeEnabled: false, person: .init(name: "Peter"))
-	)
-	#else
-	static let shared = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
-	#endif
+    #if DEBUG
+    static let shared = SimplePrefs.Mock<UserPreferences>(defaultValue: .init(
+        age: 22, 
+        isDarkModeEnabled: false, 
+        person: .init(name: "Peter"
+	)))
+    #else
+    static let shared = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
+    #endif
 }
 
 ```
@@ -57,7 +59,7 @@ AppFilePreferencesManager.shared.save() // saves preferences
 // On iOS you may call the `save` method in 
 // `func applicationDidEnterBackground(UIApplication)`
 // and/or `func applicationWillTerminate(UIApplication)`.
-// The `save` method persists your current preferences object on disk (in this case)
+// The `save` method persists your current preferences object
 ```
 
 ## Motivation
