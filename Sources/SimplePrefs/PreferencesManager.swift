@@ -33,7 +33,7 @@ public protocol PreferencesManager {
 	func save() -> Bool
 	func delete() -> Bool
 }
-extension PreferencesManager {
+public extension PreferencesManager {
 	var loaded: Self {
 		_ = load()
 		return self
