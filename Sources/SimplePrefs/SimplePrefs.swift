@@ -9,11 +9,11 @@ import Foundation
 
 enum SimplePrefs {
 	
-	typealias File = FilePreferencesManager
-	typealias Keychain = KeychainPreferencesManager
-	typealias UserDefaults = UserDefaultsPreferencesManager
+	typealias File<T: Codable> = FilePreferencesManager<T>
+	typealias Keychain<T: Codable> = KeychainPreferencesManager<T>
+	typealias UserDefaults<T: CodableWithKeys> = UserDefaultsPreferencesManager<T>
 	
-	typealias Mock = DefaultMockPreferencesManager
+	typealias Mock<T: Codable> = DefaultMockPreferencesManager<T>
 }
 
 #if canImport(CryptoKit)
