@@ -41,7 +41,7 @@ enum AppFilePreferencesManager {
         age: 22, 
         isDarkModeEnabled: false, 
         person: .init(name: "Peter"
-	)))
+    )))
     #else
     static let shared = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
     #endif
