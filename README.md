@@ -1,52 +1,59 @@
 # SimplePrefs
 
 [![Swift version](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org/download)
-[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)](https://github.com/illescasDaniel/Questions/releases)
+[![Version](https://img.shields.io/badge/version-2.0-green.svg)](https://github.com/illescasDaniel/Questions/releases)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/illescasDaniel/SimplePrefs/blob/master/LICENSE)
 
 A simple way to manage your app preferences in your Swift projects (compatible with iOS, macOS, etc).
 
 ## Usage
 
-**Note:** you can find full usage examples in the `Tests` folder.
+**Note:** you can find full examples in the `Tests` folder.
 
-To use this library, you must create a `struct` which implements one of the following protocols:
-- `FilePreferences` (saves preferences as a plain JSON file), 
-- `EncryptedFilePreferences` (saves preferences as en encrypted JSON file),
-- `KeychainPreferences` (saves preferences on user's keychain),
-- `UserDefaultsPreferences` (saves preferences using `UserDefaults`)
-
-You can also have `mock` implementations of your preferences, see `AppFilePreferences.swift` file to see an actual example; in that case you can use the generic `Preferences` protocol too.
-
-In this struct you just need to:
-- Declare all the properties (must conform to `Codable` protocol) that you want to save.
-- (singleton) Declare a static variable `shared` with this default value: `Self.loaded() ?? Self()` or `Self.loadedOrNew()`, that is, an instance with loaded preferences (either from disk or other source) or if there are no previous preferences saved, a new clean instance is created.
-
-- (Only for keychain prefs.) Declare a `key: String` property, containing a `String` key (like a key from a dictionary, just to identify it).
-- (Only for encrypted prefs.) Declare a `dataKey: Data` property, containing the 256bits key used for encryption.
-- (Only necessary for user defaults) Declare a `CodingKeys` enum conforming to `String, CodingKey, CaseIterable` with the user preferences keys.
-
-**Example:**
+These are the preferences managers available right now:
+- `SimplePrefs.File`: saves preferences as a plain JSON file
+- `SimplePrefs.EncryptedFile`: saves preferences as en encrypted JSON file
+- `SimplePrefs.Keychain`: saves preferences on user's keychain
+- `SimplePrefs.UserDefaults`: saves preferences using `UserDefaults`)`
+- `SimplePrefs.Mock`: doesn't persist anything but conforms to the same protocol as the others, it just uses a default instance passed in the constructor.
 
 ```swift
-struct AppPreferencesManager: FilePreferences {
-	
-    static var shared: Self = Self.loaded() ?? Self()
-	
-    // MARK: Properties
-	
-    var age: Int?
-    var isDarkModeEnabled: Bool = false
-    var person: Person = .init(name: "John") // `Person` must conform to `Codable`
+// The model
+struct UserPreferences: Codable {
+	var age: Int?
+	var isDarkModeEnabled: Bool = false
+	var person: Person = .init(name: "John")
 }
+
+// Only necessary for `UserDefaultsPreferencesManager`
+extension UserPreferences: CodableWithKeys {
+	enum CodingKeys: String, CodingKey, CaseIterable {
+		case age
+		case isDarkModeEnabled
+		case person
+	}
+}
+
+// The recommended preferences manager which uses a mock instance if runnning on a DEBUG executable
+enum AppFilePreferencesManager {
+	#if DEBUG
+	static let shared = SimplePrefs.Mock<UserPreferences>(
+		defaultValue: .init(age: 22, isDarkModeEnabled: false, person: .init(name: "Peter"))
+	)
+	#else
+	static let shared = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
+	#endif
+}
+
 ```
 ```swift
+// You must call the `load` method here, or use `loaded` when creating the shared instance
+// AppFilePreferencesManager.shared.load()
 
-AppPreferencesManager.shared.isDarkMode = true
-print(AppPreferencesManager.shared.isDarkMode) // true
+AppFilePreferencesManager.shared.age = 20 // Optional(20)
+AppFilePreferencesManager.shared.isDarkModeEnabled // false
 
-AppPreferencesManager.shared.save()
-
+AppFilePreferencesManager.shared.save() // saves preferences
 // On iOS you may call the `save` method in 
 // `func applicationDidEnterBackground(UIApplication)`
 // and/or `func applicationWillTerminate(UIApplication)`.

@@ -3,167 +3,134 @@ import XCTest
 
 final class SimplePrefsTests: XCTestCase {
 	
-	var filePrefs: AppFilePreferences {
-		get { AppFilePreferencesManager.shared }
-		set { AppFilePreferencesManager.shared = newValue }
-	}
-	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
-	var encryptedFilePrefs: EncryptedFilePreferencesManager {
-		get { .shared }
-		set { EncryptedFilePreferencesManager.shared = newValue }
-	}
-	var userDefaultsPrefs: UserDefaultsPreferencesManager {
-		get { .shared }
-		set { UserDefaultsPreferencesManager.shared = newValue }
-	}
-	var keychainPrefs: AppKeychainPreferencesManager {
-		get { .shared }
-		set { AppKeychainPreferencesManager.shared = newValue }
-	}
+	let newAge: Int = 100
+	let isDark = true
+	let person = Person(name: "Daniel")
 	
 	//
 	
-	func testDefaultValues() {
+	func testFilePrefs() {
 		
-		UserDefaultsPreferencesManager.CodingKeys.allCases.map { $0.rawValue }.forEach { key in
-			UserDefaults.standard.removeObject(forKey: key)
-		}
+		let prefs = SimplePrefs.File<UserPreferences>(defaultValue: .init())
+		prefs.delete()
 		
-		XCTAssertEqual(filePrefs.age, nil)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.age, nil)
-		}
-		XCTAssertEqual(userDefaultsPrefs.age, nil)
+		// default values
+		XCTAssertEqual(prefs.value.age, nil)
+		XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
+		XCTAssertEqual(prefs.value.person, Person(name: "John"))
 		
-		XCTAssertEqual(filePrefs.isDarkModeEnabled, false)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.isDarkModeEnabled, false)
-		}
-		XCTAssertEqual(userDefaultsPrefs.isDarkModeEnabled, false)
+		// new values
+		prefs.value.age = newAge
+		prefs.value.isDarkModeEnabled = isDark
+		prefs.value.person = person
 		
-		XCTAssertEqual(filePrefs.person, Person(name: "John"))
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.person, Person(name: "John"))
-		}
-		XCTAssertEqual(userDefaultsPrefs.person, Person(name: "John"))
+		// saving
+		XCTAssertTrue(prefs.save())
+		XCTAssertTrue(FileManager.default.fileExists(atPath: prefs.path))
 		
-		XCTAssertEqual(keychainPrefs.userName, "guest")
-		XCTAssertEqual(keychainPrefs.password, nil)
-		XCTAssertEqual(keychainPrefs.randomThing, 12)
+		// loading and checking values
+		XCTAssertTrue(prefs.load())
+		XCTAssertEqual(prefs.value.age, newAge)
+		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
+		XCTAssertEqual(prefs.value.person, person)
+		
+		prefs.delete()
 	}
 	
-	func testNewValues() {
-		
-		let newAge: Int = 100
-		let isDark = true
-		let person = Person(name: "Daniel")
-		
-		filePrefs.age = newAge
+	func testEncryptedFilePrefs() {
 		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			encryptedFilePrefs.age = newAge
+			let prefs = SimplePrefs.EncryptedFile<UserPreferences>(
+				defaultValue: .init(),
+				dataKey: Data("abcdefghijklmnopqrstuvwxyz123456".utf8)
+			)
+			prefs.delete()
+			
+			// default values
+			XCTAssertEqual(prefs.value.age, nil)
+			XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
+			XCTAssertEqual(prefs.value.person, Person(name: "John"))
+			
+			// new values
+			prefs.value.age = newAge
+			prefs.value.isDarkModeEnabled = isDark
+			prefs.value.person = person
+			
+			// saving
+			XCTAssertTrue(prefs.save())
+			XCTAssertTrue(FileManager.default.fileExists(atPath: prefs.path))
+			
+			// loading and checking values
+			XCTAssertTrue(prefs.load())
+			XCTAssertEqual(prefs.value.age, newAge)
+			XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
+			XCTAssertEqual(prefs.value.person, person)
+		} else {
+			print("EncryptedFilePreferencesManager not compatible")
 		}
-		userDefaultsPrefs.age = newAge
-		XCTAssertEqual(filePrefs.age, newAge)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.age, newAge)
-		}
-		XCTAssertEqual(userDefaultsPrefs.age, newAge)
-		
-		filePrefs.isDarkModeEnabled = isDark
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			encryptedFilePrefs.isDarkModeEnabled = isDark
-		}
-		userDefaultsPrefs.isDarkModeEnabled = isDark
-		XCTAssertEqual(filePrefs.isDarkModeEnabled, isDark)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.isDarkModeEnabled, isDark)
-		}
-		XCTAssertEqual(userDefaultsPrefs.isDarkModeEnabled, isDark)
-		
-		filePrefs.person = person
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			encryptedFilePrefs.person = person
-		}
-		userDefaultsPrefs.person = person
-		XCTAssertEqual(filePrefs.person, person)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.person, person)
-		}
-		XCTAssertEqual(userDefaultsPrefs.person, person)
-		
-		keychainPrefs.userName = person.name
-		XCTAssertEqual(keychainPrefs.userName, person.name)
-		keychainPrefs.randomThing = newAge
-		XCTAssertEqual(keychainPrefs.randomThing, newAge)
-		keychainPrefs.password = "12344321"
-		XCTAssertEqual(keychainPrefs.password, "12344321")
 	}
 	
-	func testSavePreferencesAndLoad() {
+	func testUserDefaultPrefs() {
 		
-		filePrefs.save()
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertTrue(encryptedFilePrefs.save())
-		}
-		XCTAssertTrue(userDefaultsPrefs.save())
-		// I don't think the keychain works in swift package manager tests
-		// XCTAssertTrue(keychainPrefs.save())
+		let prefs = SimplePrefs.UserDefaults<UserPreferences>(defaultValue: .init())
+		prefs.delete()
 		
-		let defaultFilePrefs = (filePrefs as! DefaultAppFilePreferencesManager)
-		let path = (type(of: defaultFilePrefs).path)
-		XCTAssertNotNil(path)
-		XCTAssertTrue(FileManager.default.fileExists(atPath: path!))
+		// default values
+		XCTAssertEqual(prefs.value.age, nil)
+		XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
+		XCTAssertEqual(prefs.value.person, Person(name: "John"))
 		
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertNotNil(EncryptedFilePreferencesManager.path)
-			XCTAssertTrue(FileManager.default.fileExists(atPath: EncryptedFilePreferencesManager.path!))
-		}
+		// new values
+		prefs.value.age = newAge
+		prefs.value.isDarkModeEnabled = isDark
+		prefs.value.person = person
 		
-		newValuesAfterLoad()
+		// saving
+		XCTAssertTrue(prefs.save())
+		
+		// loading and checking values
+		XCTAssertTrue(prefs.load())
+		XCTAssertEqual(prefs.value.age, newAge)
+		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
+		XCTAssertEqual(prefs.value.person, person)
+		
+		prefs.delete()
 	}
 	
-	private func newValuesAfterLoad() {
+	// Keychain doesn't work in Swift package manager (?)
+	/*func testKeychainPrefs() {
 		
-		filePrefs = DefaultAppFilePreferencesManager.loaded() ?? .init()
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			encryptedFilePrefs = EncryptedFilePreferencesManager.loaded() ?? .init()
-		}
-		userDefaultsPrefs = UserDefaultsPreferencesManager.loaded() ?? .init()
+		let prefs = KeychainPreferencesManager<UserPreferences>(
+			defaultValue: .init(),
+			key: "com.myname.simpleprefs.tests"
+		)
+		prefs.delete()
 		
-		// I don't think the keychain works in swift package manager tests
-		// keychainPrefs = AppKeychainPreferencesManager.loaded() ?? .init()
+		// default values
+		XCTAssertEqual(prefs.value.age, nil)
+		XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
+		XCTAssertEqual(prefs.value.person, Person(name: "John"))
 		
-		let newAge: Int = 100
-		let isDark = true
-		let person = Person(name: "Daniel")
+		// new values
+		prefs.value.age = newAge
+		prefs.value.isDarkModeEnabled = isDark
+		prefs.value.person = person
 		
-		XCTAssertEqual(filePrefs.age, newAge)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.age, newAge)
-		}
-		XCTAssertEqual(userDefaultsPrefs.age, newAge)
+		// saving
+		XCTAssertTrue(prefs.save())
 		
-		XCTAssertEqual(filePrefs.isDarkModeEnabled, isDark)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.isDarkModeEnabled, isDark)
-		}
-		XCTAssertEqual(userDefaultsPrefs.isDarkModeEnabled, isDark)
+		// loading and checking values
+		XCTAssertTrue(prefs.load())
+		XCTAssertEqual(prefs.value.age, newAge)
+		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
+		XCTAssertEqual(prefs.value.person, person)
 		
-		XCTAssertEqual(filePrefs.person, person)
-		if #available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *) {
-			XCTAssertEqual(encryptedFilePrefs.person, person)
-		}
-		XCTAssertEqual(userDefaultsPrefs.person, person)
-		
-		// I don't think the keychain works in swift package manager tests
-//		XCTAssertEqual(keychainPrefs.userName, person.name)
-//		XCTAssertEqual(keychainPrefs.randomThing, newAge)
-//		XCTAssertEqual(keychainPrefs.password, "12344321")
-	}
+		prefs.delete()
+	}*/
 	
 	static var allTests = [
-		("testDefaultValues", testDefaultValues),
-		("testNewValues", testNewValues),
-		("testSavePreferencesAndLoad", testSavePreferencesAndLoad)
+		("testFilePrefs", testFilePrefs),
+		("testEncryptedFilePrefs", testEncryptedFilePrefs),
+		("testUserDefaultPrefs", testUserDefaultPrefs),
+		//("testKeychainPrefs", testKeychainPrefs)
 	]
 }

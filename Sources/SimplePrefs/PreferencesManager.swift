@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2019 Daniel Illescas Romero
+Copyright (c) 2020 Daniel Illescas Romero
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,20 +23,19 @@ SOFTWARE.
 
 import Foundation
 
-/// Base protocol for preferences, could be used in mock classes so they have all struct properties and a save method
-public protocol Preferences: Codable {
-	init()
-	@discardableResult
+public protocol PreferencesManager {
+	
+	associatedtype Value: Codable
+	
+	var value: Value { get set }
+	
+	func load() -> Bool
 	func save() -> Bool
+	func delete() -> Bool
 }
-
-/// Base protocol for SimplePrefs
-public protocol SelfPreferences: Preferences {
-	static func loaded() -> Self?
-	static func loadedOrNew() -> Self
-}
-public extension SelfPreferences {
-	static func loadedOrNew() -> Self {
-		return Self.loaded() ?? Self.init()
+extension PreferencesManager {
+	var loaded: Self {
+		_ = load()
+		return self
 	}
 }
