@@ -65,6 +65,8 @@ final class SimplePrefsTests: XCTestCase {
 			XCTAssertEqual(prefs.value.age, newAge)
 			XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
 			XCTAssertEqual(prefs.value.person, person)
+			
+			prefs.delete()
 		} else {
 			print("EncryptedFilePreferencesManager not compatible")
 		}
