@@ -84,7 +84,7 @@ public class EncryptedFilePreferencesManager<Value: Codable>: PreferencesManager
 	
 	@discardableResult
 	public func delete() -> Bool {
-		return ( try? FileManager.default.removeItem(atPath: self.path) ) == nil
+		return ( try? FileManager.default.removeItem(atPath: self.path) ) != nil
 	}
 }
 #endif
