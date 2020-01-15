@@ -34,7 +34,7 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
 		XCTAssertEqual(prefs.value.person, person)
 		
-		prefs.delete()
+		XCTAssertTrue(prefs.delete())
 	}
 	
 	func testEncryptedFilePrefs() {
@@ -66,7 +66,7 @@ final class SimplePrefsTests: XCTestCase {
 			XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
 			XCTAssertEqual(prefs.value.person, person)
 			
-			prefs.delete()
+			XCTAssertTrue(prefs.delete())
 		} else {
 			print("EncryptedFilePreferencesManager not compatible")
 		}
@@ -99,7 +99,7 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
 		XCTAssertEqual(prefs.value.person, person)
 		
-		prefs.delete()
+		XCTAssertTrue(prefs.delete())
 	}
 	
 	// Keychain doesn't work in Swift package manager (?)
@@ -130,7 +130,7 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
 		XCTAssertEqual(prefs.value.person, person)
 		
-		prefs.delete()
+		XCTAssertTrue(prefs.delete())
 	}*/
 	
 	static var allTests = [
