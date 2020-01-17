@@ -14,7 +14,7 @@ These are the preferences managers available right now:
 - `SimplePrefs.File`: saves preferences as a plain JSON file
 - `SimplePrefs.EncryptedFile`: saves preferences as en encrypted JSON file
 - `SimplePrefs.Keychain`: saves preferences on user's keychain
-- `SimplePrefs.UserDefaults`: saves preferences using `UserDefaults`)`
+- `SimplePrefs.UserDefaults`: saves preferences using `UserDefaults`
 - `SimplePrefs.Mock`: doesn't persist anything but conforms to the same protocol as the others, it just uses a default instance passed in the constructor.
 
 ```swift
@@ -34,7 +34,7 @@ extension UserPreferences: CodableWithKeys {
         case age = "UserPreferences.age"
         case isDarkModeEnabled = "UserPreferences.isDarkModeEnabled"
         case person = "UserPreferences.person"
-	}
+    }
 }
 
 // The recommended preferences manager which uses a mock instance if runnning on a DEBUG executable
