@@ -16,9 +16,12 @@ struct UserPreferences: Codable {
 
 // necessary for `UserDefaultsPreferencesManager`
 extension UserPreferences: CodableWithKeys {
+	// It is recommended to use custom key values like these in order to save
+	// unique keys into userDefaults (in case you use the same user defaults suite for
+	// two different preferences)
 	enum CodingKeys: String, CodingKey, CaseIterable {
-		case age
-		case isDarkModeEnabled
-		case person
+		case age = "UserPreferences.age"
+		case isDarkModeEnabled = "UserPreferences.isDarkModeEnabled"
+		case person = "UserPreferences.person"
 	}
 }

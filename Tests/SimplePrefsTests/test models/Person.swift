@@ -8,5 +8,11 @@
 import Foundation
 
 struct Person: Codable, Equatable {
-	var name: String = ""
+
+	var name: String = ""	
+	
+	// optional
+	enum CodingKeys: String, CodingKey {
+		case name
+	}
 }
