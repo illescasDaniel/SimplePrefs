@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 import Foundation
 
 public protocol CodableWithKeys: Codable {
@@ -47,25 +48,32 @@ public class UserDefaultsPreferencesManager<Value: CodableWithKeys>: Preferences
 		let userDefaultsDictionary = self.userDefaults.dictionaryWithValues(forKeys: Value.CodingKeys.allCases.map { $0.rawValue })
 		if let data = try? JSONSerialization.data(withJSONObject: userDefaultsDictionary),
 			let instance = try? JSONDecoder().decode(Value.self, from: data) {
-
+			
 			self.value = instance
 			return true
 		}
 		return false
 	}
 	
+	/// Same as `UserDefaults.register(defaults:)` but uses current `value` as an  input dictionary
 	@discardableResult
-	public func save() -> Bool {
-		guard let data = try? JSONEncoder().encode(self.value) else {
+	public func registerDefaults() -> Bool {
+		guard let jsonDictionary = dictionary() else {
 			return false
 		}
-		if let jsonDictionary = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] {
-			for (key,value) in jsonDictionary {
-				self.userDefaults.set(value, forKey: key)
-			}
-			return true
+		self.userDefaults.register(defaults: jsonDictionary)
+		return true
+	}
+	
+	@discardableResult
+	public func save() -> Bool {
+		guard let jsonDictionary = dictionary() else {
+			return false
 		}
-		return false
+		for (key, value) in jsonDictionary {
+			self.userDefaults.set(value, forKey: key)
+		}
+		return true
 	}
 	
 	@discardableResult
@@ -74,5 +82,17 @@ public class UserDefaultsPreferencesManager<Value: CodableWithKeys>: Preferences
 			self.userDefaults.removeObject(forKey: key.rawValue)
 		}
 		return true
+	}
+	
+	// Convenience
+	
+	private func dictionary() -> [String: Any]? {
+		guard let data = try? JSONEncoder().encode(self.value) else {
+			return nil
+		}
+		if let jsonDictionary = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] {
+			return jsonDictionary
+		}
+		return nil
 	}
 }
