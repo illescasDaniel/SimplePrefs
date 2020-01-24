@@ -44,13 +44,13 @@ public extension PreferencesManager {
 		return value[keyPath: keyPath]
 	}
 	
-	mutating func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, value: T) {
+	mutating func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T) {
 		self.value[keyPath: keyPath] = value
 	}
 	
 	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
 		get { getProperty(keyPath) }
-		set { setProperty(keyPath, value: newValue) }
+		set { setProperty(keyPath, newValue) }
 	}
 }
 
@@ -58,11 +58,11 @@ public protocol PreferencesManagerClass: class, PreferencesManager {
 	var value: Value { get set }
 }
 public extension PreferencesManagerClass {
-	func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, value: T) {
+	func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T) {
 		self.value[keyPath: keyPath] = value
 	}
 	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
 		get { getProperty(keyPath) }
-		set { setProperty(keyPath, value: newValue) }
+		set { setProperty(keyPath, newValue) }
 	}
 }
