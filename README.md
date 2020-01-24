@@ -40,30 +40,34 @@ extension UserPreferences: CodableWithKeys {
 // The recommended preferences manager which uses a mock instance if runnning on a DEBUG executable
 enum AppFilePreferencesManager {
     #if DEBUG
-    static let shared = SimplePrefs.Mock<UserPreferences>(defaultValue: .init(
+    static let instance = SimplePrefs.Mock<UserPreferences>(defaultValue: .init(
         age: 22, 
         isDarkModeEnabled: false, 
         person: .init(name: "Peter"
     )))
     #else
-    static let shared = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
+    static let instance = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
     #endif
 }
 
 ```
 ```swift
 // You must call the `load` method here, or use `loaded` when creating the shared instance
-// AppFilePreferencesManager.shared.load()
+// AppFilePreferencesManager.instance.load()
 
-AppFilePreferencesManager.shared.value.age = 20 // Optional(20)
-AppFilePreferencesManager.shared.value.isDarkModeEnabled // false
+AppFilePreferencesManager.instance.value.age = 20 // Optional(20)
+AppFilePreferencesManager.instance.value.isDarkModeEnabled // false
 
-AppFilePreferencesManager.shared.save() // saves preferences
+AppFilePreferencesManager.instance.save() // saves preferences
 
 // OR!
 
 // ('global variable')
-var appPrefs: SimplePrefs.File<UserPreferences> { AppFilePreferencesManager.shared }
+#if DEBUG
+var appPrefs: SimplePrefs.Mock<UserPreferences> { AppFilePreferencesManager.instance }
+#else
+var appPrefs: SimplePrefs.File<UserPreferences> { AppFilePreferencesManager.instance }
+#endif
 
 appPrefs.setProperty(\.age, value: 21)
 appPrefs.getProperty(\.isDarkModeEnabled)

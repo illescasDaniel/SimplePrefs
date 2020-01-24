@@ -11,10 +11,10 @@ import Foundation
 enum AppFilePreferencesManager {
 /* Example using mock default values preferences */
 //	#if DEBUG
-//	static let shared = DefaultMockPreferencesManager<UserPreferences>(
+//	static let instance = DefaultMockPreferencesManager<UserPreferences>(
 //		defaultValue: .init(age: 22, isDarkModeEnabled: false, person: .init(name: "Peter"))
 //	)
 //	#else
-	static let shared = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
+	static let instance = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
 //	#endif
 }
