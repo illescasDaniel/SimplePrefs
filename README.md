@@ -55,8 +55,8 @@ enum AppFilePreferencesManager {
 // You must call the `load` method here, or use `loaded` when creating the shared instance
 // AppFilePreferencesManager.shared.load()
 
-AppFilePreferencesManager.shared.age = 20 // Optional(20)
-AppFilePreferencesManager.shared.isDarkModeEnabled // false
+AppFilePreferencesManager.shared.value.age = 20 // Optional(20)
+AppFilePreferencesManager.shared.value.isDarkModeEnabled // false
 
 AppFilePreferencesManager.shared.save() // saves preferences
 // On iOS you may call the `save` method in 
