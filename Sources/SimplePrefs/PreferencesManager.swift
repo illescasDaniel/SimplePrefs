@@ -34,8 +34,35 @@ public protocol PreferencesManager {
 	func delete() -> Bool
 }
 public extension PreferencesManager {
+	
 	var loaded: Self {
 		_ = load()
 		return self
+	}
+	
+	func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T {
+		return value[keyPath: keyPath]
+	}
+	
+	mutating func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, value: T) {
+		self.value[keyPath: keyPath] = value
+	}
+	
+	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
+		get { getProperty(keyPath) }
+		set { setProperty(keyPath, value: newValue) }
+	}
+}
+
+public protocol PreferencesManagerClass: class, PreferencesManager {
+	var value: Value { get set }
+}
+public extension PreferencesManagerClass {
+	func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, value: T) {
+		self.value[keyPath: keyPath] = value
+	}
+	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
+		get { getProperty(keyPath) }
+		set { setProperty(keyPath, value: newValue) }
 	}
 }

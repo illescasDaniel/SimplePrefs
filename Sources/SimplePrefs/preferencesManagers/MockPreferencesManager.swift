@@ -32,7 +32,7 @@ public extension MockPreferencesManager {
 	func delete() -> Bool { true }
 }
 
-public class DefaultMockPreferencesManager<Value: Codable>: MockPreferencesManager {
+public class DefaultMockPreferencesManager<Value: Codable>: PreferencesManagerClass {
 	public var value: Value
 	
 	public init(defaultValue: Value) {

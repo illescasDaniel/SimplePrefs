@@ -23,7 +23,7 @@ SOFTWARE.
 
 import Foundation
 
-public class FilePreferencesManager<Value: Codable>: PreferencesManager {
+public class FilePreferencesManager<Value: Codable>: PreferencesManagerClass {
 	
 	public var value: Value
 	

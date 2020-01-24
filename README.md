@@ -59,6 +59,18 @@ AppFilePreferencesManager.shared.value.age = 20 // Optional(20)
 AppFilePreferencesManager.shared.value.isDarkModeEnabled // false
 
 AppFilePreferencesManager.shared.save() // saves preferences
+
+// OR!
+
+// ('global variable')
+var appPrefs: SimplePrefs.File<UserPreferences> { AppFilePreferencesManager.shared }
+
+appPrefs.setProperty(\.age, value: 21)
+appPrefs.getProperty(\.isDarkModeEnabled)
+// also: appPrefs[\.age] = 312
+
+//
+
 // On iOS you may call the `save` method in 
 // `func applicationDidEnterBackground(UIApplication)`
 // and/or `func applicationWillTerminate(UIApplication)`.
