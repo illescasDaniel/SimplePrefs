@@ -8,22 +8,17 @@ A simple way to manage your app preferences in your Swift projects (compatible w
 
 ## API:
 ```swift
-public protocol PreferencesManager {
-	
-	associatedtype Value: Codable
-	
-	func load() -> Bool
-	func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T
-	mutating func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T)
-	func save() -> Bool
-	func delete() -> Bool
-}
-public extension PreferencesManager {
-	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
-		get { getProperty(keyPath) }
-		set { setProperty(keyPath, newValue) }
-	}
-}
+associatedtype Value: Codable
+
+func load() -> Bool
+
+func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T
+func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T)
+subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T
+
+func save() -> Bool
+
+func delete() -> Bool
 ```
 
 ### Specific **preferences managers** available:
