@@ -23,7 +23,7 @@ SOFTWARE.
 
 import Foundation
 
-public class KeychainPreferencesManager<Value: Codable>: PreferencesManagerClass {
+public class KeychainPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerClass {
 	
 	internal var value: Value
 	

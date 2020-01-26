@@ -26,7 +26,7 @@ import Foundation
 import CryptoKit
 
 @available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
-public class EncryptedFilePreferencesManager<Value: Codable>: PreferencesManagerClass {
+public class EncryptedFilePreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerClass {
 	
 	internal var value: Value
 	

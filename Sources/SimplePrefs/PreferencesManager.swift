@@ -23,9 +23,13 @@ SOFTWARE.
 
 import Foundation
 
-public protocol PreferencesManager {
-	
+public protocol PM {
 	associatedtype Value: Codable
+}
+
+public protocol PreferencesManager: PM {
+	
+	
 	
 	func load() -> Bool
 	func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T
@@ -33,16 +37,16 @@ public protocol PreferencesManager {
 	func save() -> Bool
 	func delete() -> Bool
 }
-public extension PreferencesManager {
+/*public extension PreferencesManager {
 	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
 		get { getProperty(keyPath) }
-		set { setProperty(keyPath, newValue) }
+		mutating set { setProperty(keyPath, newValue) }
 	}
 }
-
+*/
 //
 
-internal protocol PreferencesManagerClass: class, PreferencesManager {
+internal protocol PreferencesManagerClass: class, PM {
 	var value: Value { get set }
 }
 extension PreferencesManagerClass {
