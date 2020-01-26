@@ -28,7 +28,7 @@ import CryptoKit
 @available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 public class EncryptedFilePreferencesManager<Value: Codable>: PreferencesManagerClass {
 	
-	public var value: Value
+	internal var value: Value
 	
 	/// 256bits/32bytes data key
 	public let dataKey: Data

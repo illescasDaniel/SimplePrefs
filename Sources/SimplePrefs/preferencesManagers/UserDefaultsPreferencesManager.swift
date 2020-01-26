@@ -29,7 +29,7 @@ public protocol CodableWithKeys: Codable {
 
 public class UserDefaultsPreferencesManager<Value: CodableWithKeys>: PreferencesManagerClass {
 	
-	public var value: Value
+	internal var value: Value
 	
 	/// `UserDefaults` instance to use. `UserDefaults.standard` by default.
 	public let userDefaults: UserDefaults

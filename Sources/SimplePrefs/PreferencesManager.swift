@@ -27,41 +27,34 @@ public protocol PreferencesManager {
 	
 	associatedtype Value: Codable
 	
-	var value: Value { get set }
-	
 	func load() -> Bool
+	func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T
+	mutating func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T)
 	func save() -> Bool
 	func delete() -> Bool
 }
 public extension PreferencesManager {
-	
-	var loaded: Self {
-		_ = load()
-		return self
-	}
-	
-	func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T {
-		return value[keyPath: keyPath]
-	}
-	
-	mutating func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T) {
-		self.value[keyPath: keyPath] = value
-	}
-	
 	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
 		get { getProperty(keyPath) }
 		set { setProperty(keyPath, newValue) }
 	}
 }
 
-public protocol PreferencesManagerClass: class, PreferencesManager {
+//
+
+internal protocol PreferencesManagerClass: class, PreferencesManager {
 	var value: Value { get set }
 }
-public extension PreferencesManagerClass {
-	func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T) {
+extension PreferencesManagerClass {
+	public func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T {
+		return value[keyPath: keyPath]
+	}
+	
+	public func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T) {
 		self.value[keyPath: keyPath] = value
 	}
-	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
+	
+	public subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
 		get { getProperty(keyPath) }
 		set { setProperty(keyPath, newValue) }
 	}

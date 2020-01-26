@@ -25,7 +25,7 @@ import Foundation
 
 public class FilePreferencesManager<Value: Codable>: PreferencesManagerClass {
 	
-	public var value: Value
+	internal var value: Value
 	
 	public let path: String
 	public let fileName: String
