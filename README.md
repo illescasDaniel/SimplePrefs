@@ -6,17 +6,31 @@
 
 A simple way to manage your app preferences in your Swift projects (compatible with iOS, macOS, etc).
 
-## Usage
+## API:
+```swift
+associatedtype Value: Codable
 
-**Note:** you can find full examples in the `Tests` folder.
+func load() -> Bool
 
-These are the preferences managers available right now:
-- `SimplePrefs.File`: saves preferences as a plain JSON file
-- `SimplePrefs.EncryptedFile`: saves preferences as en encrypted JSON file
-- `SimplePrefs.Keychain`: saves preferences on user's keychain
-- `SimplePrefs.UserDefaults`: saves preferences using `UserDefaults`
+func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T
+func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T)
+subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T
+
+func save() -> Bool
+
+func delete() -> Bool
+```
+
+### Specific **preferences managers** available:
+- `SimplePrefs.File`: saves preferences as a **plain JSON file**
+- `SimplePrefs.EncryptedFile`: saves preferences as en **encrypted JSON file**
+- `SimplePrefs.Keychain`: saves preferences on **user's keychain**
+- `SimplePrefs.UserDefaults`: saves preferences using **`UserDefaults`**
 - `SimplePrefs.Mock`: doesn't persist anything but conforms to the same protocol as the others, it just uses a default instance passed in the constructor.
 
+## Usage
+
+You need a **model** with the properties you want to save:
 ```swift
 // The model
 struct UserPreferences: Codable {
@@ -36,54 +50,45 @@ extension UserPreferences: CodableWithKeys {
         case person = "UserPreferences.person"
     }
 }
+```
 
-// The recommended preferences manager which uses a mock instance if runnning on a DEBUG executable
-enum AppFilePreferencesManager {
+The recommended way of using your preferences:
+```swift
+enum AppPrefs {
     #if DEBUG
-    static let instance = SimplePrefs.Mock<UserPreferences>(defaultValue: .init(
-        age: 22, 
-        isDarkModeEnabled: false, 
+    typealias Instance = SimplePrefs.Mock<UserPreferences>
+    static let instance = Instance(defaultValue: .init(
+        age: 22,
+        isDarkModeEnabled: false,
         person: .init(name: "Peter"
     )))
     #else
-    static let instance = SimplePrefs.File<UserPreferences>(defaultValue: .init()).loaded
+    typealias Instance = SimplePrefs.File<UserPreferences>
+    static let instance = Instance(defaultValue: .init())
     #endif
 }
 
+var appPrefs: AppPrefs.Instance { AppPrefs.instance }
 ```
+
+Usage:
 ```swift
-// You must call the `load` method here, or use `loaded` when creating the shared instance
-// AppFilePreferencesManager.instance.load()
+appPrefs.load() // - loads preferences
 
-AppFilePreferencesManager.instance.value.age = 20 // Optional(20)
-AppFilePreferencesManager.instance.value.isDarkModeEnabled // false
+appPrefs[\.isDarkModeEnabled] // gets a value
+appPrefs[\.age] = 60 // sets a value
+// also: appPrefs.setProperty(\.age, value: 60)
+// also: appPrefs.getProperty(\.isDarkModeEnabled)
 
-AppFilePreferencesManager.instance.save() // saves preferences
+appPrefs.save() // - saves preferences
 
-// OR!
-
-// ('global variable')
-#if DEBUG
-var appPrefs: SimplePrefs.Mock<UserPreferences> { AppFilePreferencesManager.instance }
-#else
-var appPrefs: SimplePrefs.File<UserPreferences> { AppFilePreferencesManager.instance }
-#endif
-
-appPrefs.setProperty(\.age, value: 21)
-appPrefs.getProperty(\.isDarkModeEnabled)
-// also: appPrefs[\.age] = 312
-
-//
-
-// On iOS you may call the `save` method in 
-// `func applicationDidEnterBackground(UIApplication)`
-// and/or `func applicationWillTerminate(UIApplication)`.
-// The `save` method persists your current preferences object
+// On iOS you may call the `save` method in
+// `func applicationDidEnterBackground(UIApplication)` and/or `func applicationWillTerminate(UIApplication)`.
 ```
 
 ## Motivation
 
-We all have used `UserDefaults` to store small data, mainly for user preferences in an application. Though is fast and reliable, you must store values using unique keys, which you should have as constants (or in an enum). 
+We all have used `UserDefaults` to store small data, mainly for user preferences in an application. Though is fast and reliable, you must store values using unique keys, which you should have as constants (or in an enum).
 `UserDefaults` is easy but have some disadvantages like small capacity, having to use string keys to store and retrieve values, is not easy to get this preferences as something you can send or download over the internet (remote preferences saved in the cloud for example!).
 
 That's basically why I created **`SimplePrefs`**, which have different classes that store your preferences in different ways.

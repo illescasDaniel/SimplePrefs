@@ -17,12 +17,11 @@ final class SimplePrefsTests: XCTestCase {
 		// default values
 		XCTAssertEqual(prefs[\.age], nil)
 		XCTAssertEqual(prefs.getProperty(\.age), nil)
-		XCTAssertEqual(prefs.value.age, nil)
-		XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
-		XCTAssertEqual(prefs.value.person, Person(name: "John"))
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.person], Person(name: "John"))
 		
 		// new values
-		prefs.value.age = newAge
+		prefs[\.age] = newAge
 		prefs.setProperty(\.isDarkModeEnabled, isDark)
 		prefs[\.person] = person
 		
@@ -32,9 +31,9 @@ final class SimplePrefsTests: XCTestCase {
 		
 		// loading and checking values
 		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs.value.age, newAge)
-		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
-		XCTAssertEqual(prefs.value.person, person)
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
 		
 		XCTAssertTrue(prefs.delete())
 	}
@@ -51,12 +50,11 @@ final class SimplePrefsTests: XCTestCase {
 			// default values
 			XCTAssertEqual(prefs[\.age], nil)
 			XCTAssertEqual(prefs.getProperty(\.age), nil)
-			XCTAssertEqual(prefs.value.age, nil)
-			XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
-			XCTAssertEqual(prefs.value.person, Person(name: "John"))
+			XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+			XCTAssertEqual(prefs[\.person], Person(name: "John"))
 			
 			// new values
-			prefs.value.age = newAge
+			prefs[\.age] = newAge
 			prefs.setProperty(\.isDarkModeEnabled, isDark)
 			prefs[\.person] = person
 			
@@ -66,9 +64,9 @@ final class SimplePrefsTests: XCTestCase {
 			
 			// loading and checking values
 			XCTAssertTrue(prefs.load())
-			XCTAssertEqual(prefs.value.age, newAge)
-			XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
-			XCTAssertEqual(prefs.value.person, person)
+			XCTAssertEqual(prefs[\.age], newAge)
+			XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+			XCTAssertEqual(prefs[\.person], person)
 			
 			XCTAssertTrue(prefs.delete())
 		} else {
@@ -87,12 +85,11 @@ final class SimplePrefsTests: XCTestCase {
 		// default values
 		XCTAssertEqual(prefs[\.age], nil)
 		XCTAssertEqual(prefs.getProperty(\.age), nil)
-		XCTAssertEqual(prefs.value.age, nil)
-		XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
-		XCTAssertEqual(prefs.value.person, Person(name: "John"))
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.person], Person(name: "John"))
 		
 		// new values
-		prefs.value.age = newAge
+		prefs[\.age] = newAge
 		prefs.setProperty(\.isDarkModeEnabled, isDark)
 		prefs[\.person] = person
 		
@@ -101,9 +98,9 @@ final class SimplePrefsTests: XCTestCase {
 		
 		// loading and checking values
 		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs.value.age, newAge)
-		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
-		XCTAssertEqual(prefs.value.person, person)
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
 		
 		XCTAssertTrue(prefs.delete())
 	}
@@ -120,12 +117,11 @@ final class SimplePrefsTests: XCTestCase {
 		// default values
 		XCTAssertEqual(prefs[\.age], nil)
 		XCTAssertEqual(prefs.getProperty(\.age), nil)
-		XCTAssertEqual(prefs.value.age, nil)
-		XCTAssertEqual(prefs.value.isDarkModeEnabled, false)
-		XCTAssertEqual(prefs.value.person, Person(name: "John"))
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.person], Person(name: "John"))
 		
 		// new values
-		prefs.value.age = newAge
+		prefs[\.age] = newAge
 		prefs.setProperty(\.isDarkModeEnabled, isDark)
 		prefs[\.person] = person
 		
@@ -134,9 +130,9 @@ final class SimplePrefsTests: XCTestCase {
 		
 		// loading and checking values
 		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs.value.age, newAge)
-		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
-		XCTAssertEqual(prefs.value.person, person)
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
 		
 		XCTAssertTrue(prefs.delete())
 	}*/
@@ -152,14 +148,14 @@ final class SimplePrefsTests: XCTestCase {
 		
 		// default values
 		XCTAssertEqual(
-			prefs.value.age ?? 0,
+			prefs[\.age] ?? 0,
 			prefs.userDefaults.integer(forKey: UserPreferences.CodingKeys.age.rawValue)
 		)
 		XCTAssertEqual(
-			prefs.value.isDarkModeEnabled,
+			prefs[\.isDarkModeEnabled],
 			prefs.userDefaults.bool(forKey: UserPreferences.CodingKeys.isDarkModeEnabled.rawValue)
 		)
-		guard let personData = try? JSONEncoder().encode(prefs.value.person),
+		guard let personData = try? JSONEncoder().encode(prefs[\.person]),
 			let personDictionary = (try? JSONSerialization.jsonObject(with: personData)) as? [String: Any] else {
 			XCTAssert(false, "Error encoding person object")
 			return
@@ -178,18 +174,18 @@ final class SimplePrefsTests: XCTestCase {
 		)
 		
 		// new values
-		prefs.value.age = newAge
-		prefs.value.isDarkModeEnabled = isDark
-		prefs.value.person = person
+		prefs[\.age] = newAge
+		prefs[\.isDarkModeEnabled] = isDark
+		prefs[\.person] = person
 		
 		// saving
 		XCTAssertTrue(prefs.save())
 		
 		// loading and checking values
 		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs.value.age, newAge)
-		XCTAssertEqual(prefs.value.isDarkModeEnabled, isDark)
-		XCTAssertEqual(prefs.value.person, person)
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
 		
 		XCTAssertTrue(prefs.delete())
 	}

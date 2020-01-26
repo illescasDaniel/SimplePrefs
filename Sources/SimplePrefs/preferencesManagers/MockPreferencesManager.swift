@@ -23,17 +23,15 @@ SOFTWARE.
 
 import Foundation
 
-public protocol MockPreferencesManager: PreferencesManager {
-	var value: Value { get set }
-}
+public protocol MockPreferencesManager: PreferencesManager {}
 public extension MockPreferencesManager {
 	func load() -> Bool { true }
 	func save() -> Bool { true }
 	func delete() -> Bool { true }
 }
 
-public class DefaultMockPreferencesManager<Value: Codable>: PreferencesManagerClass {
-	public var value: Value
+public class DefaultMockPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
+	internal var value: Value
 	
 	public init(defaultValue: Value) {
 		self.value = defaultValue

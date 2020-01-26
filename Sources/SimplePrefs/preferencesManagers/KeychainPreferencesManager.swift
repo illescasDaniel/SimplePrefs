@@ -23,9 +23,9 @@ SOFTWARE.
 
 import Foundation
 
-public class KeychainPreferencesManager<Value: Codable>: PreferencesManagerClass {
+public class KeychainPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
 	
-	public var value: Value
+	internal var value: Value
 	
 	/// Similar to a dictionary key, used to identify the saved data. (Is not an encryption key)
 	public let key: String
