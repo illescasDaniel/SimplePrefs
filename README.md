@@ -25,8 +25,7 @@ func delete() -> Bool
 - `SimplePrefs.File`: saves preferences as a **plain JSON file**
 - `SimplePrefs.EncryptedFile`: saves preferences as en **encrypted JSON file**
 - `SimplePrefs.Keychain`: saves preferences on **user's keychain**
-- `SimplePrefs.LazyUserDefaults`: saves preferences using **`UserDefaults`** but is not in sync with `UserDefaults` until you call the `load` or `save` methods
-- `SimplePrefs.UserDefaults`: saves preferences using **`UserDefaults`**, the values are in sync with those stored in `UserDefaults`
+- `SimplePrefs.UserDefaults`: saves preferences using **`UserDefaults`**
 - `SimplePrefs.Mock`: doesn't persist anything but conforms to the same protocol as the others, it just uses a default instance passed in the constructor.
 
 ## Usage

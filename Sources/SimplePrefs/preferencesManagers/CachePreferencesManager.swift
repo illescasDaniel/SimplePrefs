@@ -23,35 +23,39 @@ SOFTWARE.
 
 import Foundation
 
-public protocol PreferencesManagerValue {
-	associatedtype Value //: Codable
-}
-
-public protocol PreferencesManager: class, PreferencesManagerValue {
-	func load() -> Bool
-	func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T
-	func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T)
-	func save() -> Bool
-	func delete() -> Bool
-}
-public extension PreferencesManager {
-	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
-		get { getProperty(keyPath) }
-		set { setProperty(keyPath, newValue) }
-	}
-}
-
-//
-
-internal protocol PreferencesManagerInternals: class, PreferencesManagerValue {
-	var value: Value { get set }
-}
-extension PreferencesManagerInternals {
-	public func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T {
-		return value[keyPath: keyPath]
+public class CachePreferencesManager<Value: WithKeys>: PreferencesManager, PreferencesManagerInternals {
+	
+	internal var value: Value
+	
+	/// `UserDefaults` instance to use. `UserDefaults.standard` by default.
+	public let cache: NSCache<NSString, AnyObject>
+	
+	/// `UserDefaults` preferences manager
+	/// - Parameters:
+	///   - defaultValue: Default prefrerences data value
+	///   - userDefaults: `UserDefaults` instance to use. `UserDefaults.standard` by default.
+	public init(defaultValue: Value) {
+		self.value = defaultValue
+		for (_, value) in Mirror(reflecting: self.value).children {
+			if let keyValueObject = (value as? _CacheWrapperProtocol) {
+				keyValueObject._cache = self._cache
+				keyValueObject._registerDefault()
+			}
+		}
 	}
 	
-	public func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T) {
-		self.value[keyPath: keyPath] = value
+	@discardableResult
+	public func load() -> Bool {
+		return true
+	}
+	
+	@discardableResult
+	public func save() -> Bool {
+		return true
+	}
+	
+	@discardableResult
+	public func delete() -> Bool {
+		return self.cache.removeAllObjects()
 	}
 }
