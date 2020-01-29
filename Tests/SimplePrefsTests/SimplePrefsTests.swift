@@ -77,9 +77,9 @@ final class SimplePrefsTests: XCTestCase {
 		#endif
 	}
 	
-	func testUserDefaultPrefs() {
+	func testLazyUserDefaultPrefs() {
 		
-		let prefs = SimplePrefs.UserDefaults<UserPreferences>(defaultValue: .init())
+		let prefs = SimplePrefs.LazyUserDefaults<UserPreferences>(defaultValue: .init())
 		prefs.delete()
 		
 		// default values
@@ -141,7 +141,7 @@ final class SimplePrefsTests: XCTestCase {
 	
 	func testRegisterDefaultsInUserDefaultPrefs() {
 		
-		let prefs = SimplePrefs.UserDefaults<UserPreferences>(defaultValue: .init())
+		let prefs = SimplePrefs.LazyUserDefaults<UserPreferences>(defaultValue: .init())
 		prefs.delete()
 		
 		XCTAssertTrue(prefs.registerDefaults())
@@ -193,7 +193,7 @@ final class SimplePrefsTests: XCTestCase {
 	static var allTests = [
 		("testFilePrefs", testFilePrefs),
 		("testEncryptedFilePrefs", testEncryptedFilePrefs),
-		("testUserDefaultPrefs", testUserDefaultPrefs),
+		("testLazyUserDefaultPrefs", testLazyUserDefaultPrefs),
 		//("testKeychainPrefs", testKeychainPrefs),
 		("testRegisterDefaultsInUserDefaultPrefs", testRegisterDefaultsInUserDefaultPrefs)
 	]

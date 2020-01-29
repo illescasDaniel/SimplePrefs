@@ -27,7 +27,7 @@ public protocol CodableWithKeys: Codable {
 	associatedtype CodingKeys: CodingKey, CaseIterable, RawRepresentable where CodingKeys.RawValue == String
 }
 
-public class UserDefaultsPreferencesManager<Value: CodableWithKeys>: PreferencesManager, PreferencesManagerInternals {
+public class LazyUserDefaultsPreferencesManager<Value: CodableWithKeys>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	

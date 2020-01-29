@@ -11,7 +11,7 @@ public enum SimplePrefs {
 	
 	public typealias File = FilePreferencesManager
 	public typealias Keychain = KeychainPreferencesManager
-	public typealias UserDefaults = UserDefaultsPreferencesManager
+	public typealias LazyUserDefaults = LazyUserDefaultsPreferencesManager
 	
 	public typealias Mock = DefaultMockPreferencesManager
 }
