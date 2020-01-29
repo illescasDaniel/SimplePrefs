@@ -24,7 +24,7 @@ SOFTWARE.
 import Foundation
 
 public protocol PreferencesManagerValue {
-	associatedtype Value: Codable
+	associatedtype Value//: Codable
 }
 
 public protocol PreferencesManager: class, PreferencesManagerValue {
