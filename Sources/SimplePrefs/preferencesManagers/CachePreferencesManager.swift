@@ -28,7 +28,7 @@ public class CachePreferencesManager<Value: WithKeys>: PreferencesManager, Prefe
 	internal var value: Value
 	
 	/// `UserDefaults` instance to use. `UserDefaults.standard` by default.
-	public let cache: NSCache<NSString, AnyObject>
+	public let cache = NSCache<NSString, AnyObject>()
 	
 	/// `UserDefaults` preferences manager
 	/// - Parameters:
@@ -38,8 +38,7 @@ public class CachePreferencesManager<Value: WithKeys>: PreferencesManager, Prefe
 		self.value = defaultValue
 		for (_, value) in Mirror(reflecting: self.value).children {
 			if let keyValueObject = (value as? _CacheWrapperProtocol) {
-				keyValueObject._cache = self._cache
-				keyValueObject._registerDefault()
+				keyValueObject._cache = self.cache
 			}
 		}
 	}
@@ -56,6 +55,7 @@ public class CachePreferencesManager<Value: WithKeys>: PreferencesManager, Prefe
 	
 	@discardableResult
 	public func delete() -> Bool {
-		return self.cache.removeAllObjects()
+		self.cache.removeAllObjects()
+		return true
 	}
 }

@@ -17,11 +17,18 @@ public class CacheKeyValueWrapper<T: Codable>: _CacheWrapperProtocol {
 	public var wrappedValue: T? {
 		get {
 			assert(_cache != nil)
-			return (_cache.object(forKey: self.key as NSString) as? Box<T>)?.value
+			if T.self is AnyObject.Type {
+				return _cache.object(forKey: self.key as NSString) as? T ?? self.defaultValue
+			}
+			return (_cache.object(forKey: self.key as NSString) as? Box<T?>)?.value ?? self.defaultValue
 		}
 		set {
 			assert(_cache != nil)
-			_cache.setObject(Box(newValue), forKey: self.key as NSString)
+			if T.self is AnyObject.Type {
+				_cache.setObject((newValue ?? self.defaultValue) as AnyObject, forKey: self.key as NSString)
+			} else {
+				_cache.setObject(Box(newValue ?? self.defaultValue), forKey: self.key as NSString)
+			}
 		}
 	}
 	
