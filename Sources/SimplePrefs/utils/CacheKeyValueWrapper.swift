@@ -12,7 +12,7 @@ internal protocol _CacheWrapperProtocol: class {
 }
 
 @propertyWrapper
-public class CacheKeyValueWrapper<T: Codable>: _CacheWrapperProtocol {
+public class CacheKeyValueWrapper<T>: _CacheWrapperProtocol {
 	
 	public var wrappedValue: T? {
 		get {
