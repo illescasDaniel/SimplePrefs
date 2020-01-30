@@ -23,7 +23,7 @@ SOFTWARE.
 
 import Foundation
 
-public class CachePreferencesManager<Value: WithKeys>: PreferencesManager, PreferencesManagerInternals {
+public class CachePreferencesManager<Value>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	
