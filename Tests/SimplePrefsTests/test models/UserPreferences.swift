@@ -14,7 +14,7 @@ struct UserPreferences: Codable {
 }
 
 // necessary for `UserDefaultsPreferencesManager`
-extension UserPreferences: SimplePrefs.Model.StringKeysCaseIterable {
+extension UserPreferences: SimplePrefs.UserDefaultsKey {
 	// It is recommended to use custom key values like these in order to save
 	// unique keys into userDefaults (in case you use the same user defaults suite for
 	// two different preferences)

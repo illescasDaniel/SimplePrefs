@@ -171,7 +171,7 @@ final class SimplePrefsTests: XCTestCase {
 	// Keychain doesn't work in Swift package manager (?)
 	/*func testKeychainKeyValuePrefs() {
 		
-		let prefs = SimplePrefs.KeychainProperties<UserPreferences4>(defaultValue: .init())
+		let prefs = SimplePrefs.KeychainProperties<UserPreferencesProperties>(defaultValue: .init())
 		prefs.delete()
 		
 		// default values

@@ -7,7 +7,7 @@
 
 @testable import enum SimplePrefs.SimplePrefs
 
-struct UserPreferences5: SimplePrefs.AllProperties {
+struct UserPreferencesProperties: SimplePrefs.AllProperties {
 
 	typealias key = SimplePrefs.PropertiesKey
 
