@@ -21,14 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import Foundation
+import class Foundation.JSONEncoder
+import class Foundation.JSONDecoder
 
-public class KeychainPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
+public final class KeychainPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	
 	/// Similar to a dictionary key, used to identify the saved data. (Is not an encryption key)
 	public let key: String
+	
+	private let genericPasswordStore = GenericPasswordStore()
 	
 	/// Keychain preferences manager
 	/// - Parameters:
@@ -43,7 +46,7 @@ public class KeychainPreferencesManager<Value: Codable>: PreferencesManager, Pre
 	
 	@discardableResult
 	public func load() -> Bool {
-		if let data = GenericPasswordStore().readKey(account: self.key),
+		if let data = genericPasswordStore.readKey(account: self.key),
 			let instance = try? JSONDecoder().decode(Value.self, from: data) {
 			self.value = instance
 			return true
@@ -56,8 +59,8 @@ public class KeychainPreferencesManager<Value: Codable>: PreferencesManager, Pre
 		guard let data = try? JSONEncoder().encode(self.value) else {
 			return false
 		}
-		if GenericPasswordStore().storeKey(data, account: self.key) == false {
-			return GenericPasswordStore().updateKey(data, account: self.key)
+		if genericPasswordStore.storeKey(data, account: self.key) == false {
+			return genericPasswordStore.updateKey(data, account: self.key)
 		} else {
 			return true
 		}
@@ -65,6 +68,6 @@ public class KeychainPreferencesManager<Value: Codable>: PreferencesManager, Pre
 	
 	@discardableResult
 	public func delete() -> Bool {
-		return GenericPasswordStore().deleteKey(account: self.key)
+		return genericPasswordStore.deleteKey(account: self.key)
 	}
 }

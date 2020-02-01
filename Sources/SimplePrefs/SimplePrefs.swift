@@ -5,22 +5,25 @@
 //  Created by Daniel Illescas Romero on 06/01/2020.
 //
 
-import Foundation
-
 public enum SimplePrefs {
 	
 	public typealias File = FilePreferencesManager
 	public typealias Keychain = KeychainPreferencesManager
-	public typealias LazyUserDefaults = LazyUserDefaultsPreferencesManager
 	public typealias UserDefaults = UserDefaultsPreferencesManager
-	public typealias Cache = CachePreferencesManager
+	public typealias UserDefaultsKey = CodableModelWithStringKeysCaseIterable
+	
+	public typealias KeychainProperties = KeychainPropertiesPreferencesManager
+	public typealias CacheProperties = CachePropertiesPreferencesManager
+	public typealias UserDefaultsProperties = UserDefaultsPropertiesPreferencesManager
+	
+	public typealias PropertiesKey = GenericPropertiesWrapper
+	
+	#if canImport(CryptoKit)
+	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
+	public typealias EncryptedFile = EncryptedFilePreferencesManager
+	#endif
 	
 	public typealias Mock = DefaultMockPreferencesManager
+	
+	public typealias AllProperties = AllModelProperties
 }
-
-#if canImport(CryptoKit)
-public extension SimplePrefs {
-	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
-	typealias EncryptedFile = EncryptedFilePreferencesManager
-}
-#endif

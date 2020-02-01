@@ -1,5 +1,12 @@
-import XCTest
-@testable import SimplePrefs
+import func XCTest.XCTAssertEqual
+import func XCTest.XCTAssertTrue
+import func XCTest.XCTAssert
+import class XCTest.XCTestCase
+import class Foundation.JSONEncoder
+import class Foundation.JSONSerialization
+import class Foundation.FileManager
+import struct Foundation.Data
+@testable import enum SimplePrefs.SimplePrefs
 
 final class SimplePrefsTests: XCTestCase {
 	
@@ -79,7 +86,7 @@ final class SimplePrefsTests: XCTestCase {
 	
 	func testLazyUserDefaultPrefs() {
 		
-		let prefs = SimplePrefs.LazyUserDefaults<UserPreferences>(defaultValue: .init())
+		let prefs = SimplePrefs.UserDefaults<UserPreferences>(defaultValue: .init())
 		prefs.delete()
 		
 		// default values
@@ -107,7 +114,7 @@ final class SimplePrefsTests: XCTestCase {
 	
 	func testUserDefaultsPrefs() {
 		
-		let prefs = SimplePrefs.UserDefaults<UserPreferences2>(defaultValue: .init())
+		let prefs = SimplePrefs.UserDefaultsProperties<UserPreferencesProperties>(defaultValue: .init())
 		prefs.delete()
 		
 		// default values
@@ -135,7 +142,7 @@ final class SimplePrefsTests: XCTestCase {
 	
 	func testCachePrefs() {
 		
-		let prefs = SimplePrefs.Cache<UserPreferences3>(defaultValue: .init())
+		let prefs = SimplePrefs.CacheProperties<UserPreferencesProperties>(defaultValue: .init())
 		prefs.delete()
 		
 		// default values
@@ -160,6 +167,35 @@ final class SimplePrefsTests: XCTestCase {
 		
 		XCTAssertTrue(prefs.delete())
 	}
+	
+	// Keychain doesn't work in Swift package manager (?)
+	/*func testKeychainKeyValuePrefs() {
+		
+		let prefs = SimplePrefs.KeychainProperties<UserPreferences4>(defaultValue: .init())
+		prefs.delete()
+		
+		// default values
+		XCTAssertEqual(prefs[\.age], nil)
+		XCTAssertEqual(prefs.getProperty(\.age), nil)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.person], Person(name: "John"))
+		
+		// new values
+		prefs[\.age] = newAge
+		prefs.setProperty(\.isDarkModeEnabled, isDark)
+		prefs[\.person] = person
+		
+		// saving
+		XCTAssertTrue(prefs.save())
+		
+		// loading and checking values
+		XCTAssertTrue(prefs.load())
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		
+		XCTAssertTrue(prefs.delete())
+	}*/
 	
 	// Keychain doesn't work in Swift package manager (?)
 	/*func testKeychainPrefs() {
@@ -197,7 +233,7 @@ final class SimplePrefsTests: XCTestCase {
 	
 	func testRegisterDefaultsInUserDefaultPrefs() {
 		
-		let prefs = SimplePrefs.LazyUserDefaults<UserPreferences>(defaultValue: .init())
+		let prefs = SimplePrefs.UserDefaults<UserPreferences>(defaultValue: .init())
 		prefs.delete()
 		
 		XCTAssertTrue(prefs.registerDefaults())

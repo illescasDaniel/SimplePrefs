@@ -21,9 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import Foundation
+import class Foundation.NSCache
+import class Foundation.NSString
 
-public class CachePreferencesManager<Value>: PreferencesManager, PreferencesManagerInternals {
+final public class CachePropertiesPreferencesManager<Value: AllModelProperties>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	
@@ -32,13 +33,21 @@ public class CachePreferencesManager<Value>: PreferencesManager, PreferencesMana
 	
 	/// `UserDefaults` preferences manager
 	/// - Parameters:
-	///   - defaultValue: Default prefrerences data value
+	///   - defaultValue: Default prefrerences data value.
 	///   - userDefaults: `UserDefaults` instance to use. `UserDefaults.standard` by default.
-	public init(defaultValue: Value) {
+	///   - totalCostLimit: The maximum total cost that the cache can hold before it starts evicting objects.
+	///   - countLimit: The maximum number of objects the cache should hold.
+	public init(defaultValue: Value, totalCostLimit: Int? = nil, countLimit: Int? = nil) {
 		self.value = defaultValue
-		for (_, value) in Mirror(reflecting: self.value).children {
-			if let keyValueObject = (value as? _CacheWrapperProtocol) {
-				keyValueObject._cache = self.cache
+		if let totalCostLimit = totalCostLimit {
+			self.cache.totalCostLimit = totalCostLimit
+		}
+		if let countLimit = countLimit {
+			self.cache.countLimit = countLimit
+		}
+		for property in self.value.allProperties {
+			if let wrapper = (property as? _CacheKeyValueWrapperInjectedValue) {
+				wrapper._cache = self.cache
 			}
 		}
 	}

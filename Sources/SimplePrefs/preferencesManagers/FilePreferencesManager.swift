@@ -21,9 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import Foundation
+import class Foundation.FileManager
+import class Foundation.JSONEncoder
+import class Foundation.JSONDecoder
 
-public class FilePreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
+public final class FilePreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	

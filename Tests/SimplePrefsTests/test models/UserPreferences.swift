@@ -5,8 +5,7 @@
 //  Created by Daniel Illescas Romero on 06/01/2020.
 //
 
-import Foundation
-@testable import SimplePrefs
+@testable import enum SimplePrefs.SimplePrefs
 
 struct UserPreferences: Codable {
 	var age: Int?
@@ -15,7 +14,7 @@ struct UserPreferences: Codable {
 }
 
 // necessary for `UserDefaultsPreferencesManager`
-extension UserPreferences: CodableWithKeys {
+extension UserPreferences: SimplePrefs.Model.StringKeysCaseIterable {
 	// It is recommended to use custom key values like these in order to save
 	// unique keys into userDefaults (in case you use the same user defaults suite for
 	// two different preferences)

@@ -21,13 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import Foundation
+import class Foundation.JSONEncoder
+import class Foundation.JSONDecoder
+import class Foundation.UserDefaults
+import class Foundation.JSONSerialization
 
-public protocol WithKeys {
-	associatedtype CodingKeys: CodingKey, CaseIterable
-}
-
-public class UserDefaultsPreferencesManager<Value: WithKeys>: PreferencesManager, PreferencesManagerInternals {
+public final class UserDefaultsPreferencesManager<Value: CodableModelWithStringKeysCaseIterable>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	
@@ -41,29 +40,58 @@ public class UserDefaultsPreferencesManager<Value: WithKeys>: PreferencesManager
 	public init(defaultValue: Value, userDefaults: UserDefaults = .standard) {
 		self.value = defaultValue
 		self.userDefaults = userDefaults
-		for (_, value) in Mirror(reflecting: self.value).children {
-			if let keyValueObject = (value as? _UserDefaultsKeyValueWrapperProtocol) {
-				keyValueObject._userDefaults = self.userDefaults
-				keyValueObject._registerDefault()
-			}
-		}
 	}
 	
 	@discardableResult
 	public func load() -> Bool {
+		let userDefaultsDictionary = self.userDefaults.dictionaryWithValues(forKeys: Value.CodingKeys.allCases.map { $0.rawValue })
+		if let data = try? JSONSerialization.data(withJSONObject: userDefaultsDictionary),
+			let instance = try? JSONDecoder().decode(Value.self, from: data) {
+			
+			self.value = instance
+			return true
+		}
+		return false
+	}
+	
+	/// Same as `UserDefaults.register(defaults:)` but uses current `value` as an  input dictionary
+	@discardableResult
+	public func registerDefaults() -> Bool {
+		guard let jsonDictionary = dictionary() else {
+			return false
+		}
+		self.userDefaults.register(defaults: jsonDictionary)
 		return true
 	}
 	
 	@discardableResult
 	public func save() -> Bool {
+		guard let jsonDictionary = dictionary() else {
+			return false
+		}
+		for (key, value) in jsonDictionary {
+			self.userDefaults.set(value, forKey: key)
+		}
 		return true
 	}
 	
 	@discardableResult
 	public func delete() -> Bool {
 		Value.CodingKeys.allCases.forEach { key in
-			self.userDefaults.removeObject(forKey: key.stringValue)
+			self.userDefaults.removeObject(forKey: key.rawValue)
 		}
 		return true
+	}
+	
+	// Convenience
+	
+	private func dictionary() -> [String: Any]? {
+		guard let data = try? JSONEncoder().encode(self.value) else {
+			return nil
+		}
+		if let jsonDictionary = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] {
+			return jsonDictionary
+		}
+		return nil
 	}
 }

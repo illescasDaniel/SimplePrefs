@@ -7,8 +7,24 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import Foundation
-import Security
+import struct Foundation.Data
+
+import typealias CoreFoundation.CFTypeRef
+import class CoreFoundation.CFDictionary
+
+import func Security.SecItemAdd
+import func Security.SecItemCopyMatching
+import func Security.SecItemDelete
+import var Security.kSecClass
+import var Security.kSecClassGenericPassword
+import var Security.kSecAttrAccount
+import var Security.kSecAttrAccessible
+import var Security.kSecAttrAccessibleWhenUnlocked
+import var Security.kSecValueData
+import var Security.kSecUseDataProtectionKeychain
+import var Security.errSecSuccess
+import var Security.errSecItemNotFound
+import var Security.kSecReturnData
 
 struct GenericPasswordStore {
 	
