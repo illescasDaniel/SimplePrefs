@@ -14,11 +14,11 @@ internal protocol _KeychainKeyValueWrapperProtocol: class {
 }
 
 @propertyWrapper
-final internal class KeychainPropertiesWrapper<T: Codable>: PropertiesWrapper, _KeychainKeyValueWrapperProtocol {
+final internal class KeychainPropertyWrapper<T: Codable>: PropertiesWrapper, _KeychainKeyValueWrapperProtocol {
 	
 	private let keychain = GenericPasswordStore()
 	
-	internal var projectedValue: KeychainPropertiesWrapper<T> { self }
+	internal var projectedValue: KeychainPropertyWrapper<T> { self }
 	
 	internal var wrappedValue: T? {
 		get {

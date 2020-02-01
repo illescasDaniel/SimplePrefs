@@ -5,7 +5,7 @@
 //  Created by Daniel Illescas Romero on 01/02/2020.
 //
 
-internal protocol PropertiesWrapper {
+internal protocol StoragePropertyWrapper {
 	
 	associatedtype Wrapped
 	

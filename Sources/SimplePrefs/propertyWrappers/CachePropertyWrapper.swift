@@ -13,9 +13,9 @@ internal protocol _CacheKeyValueWrapperInjectedValue: class {
 }
 
 @propertyWrapper
-final internal class CachePropertiesWrapper<T>: PropertiesWrapper, _CacheKeyValueWrapperInjectedValue {
+final internal class CachePropertyWrapper<T>: PropertiesWrapper, _CacheKeyValueWrapperInjectedValue {
 	
-	internal var projectedValue: CachePropertiesWrapper<T> { self }
+	internal var projectedValue: CachePropertyWrapper<T> { self }
 	
 	internal var wrappedValue: T? {
 		get {
@@ -74,5 +74,5 @@ final internal class CachePropertiesWrapper<T>: PropertiesWrapper, _CacheKeyValu
 	
 	// private
 	
-	public var _cache: NSCache<NSString, AnyObject>!
+	internal var _cache: NSCache<NSString, AnyObject>!
 }

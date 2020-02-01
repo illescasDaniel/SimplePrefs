@@ -62,11 +62,6 @@ final public class KeychainPropertiesPreferencesManager<Value: AllModelPropertie
 					success = false
 				}
 			}
-//			if let wrapper = (property as? _KeychainKeyValueWrapperProtocol) {
-//				if !keychain.deleteKey(account: wrapper.key) {
-//					success = false
-//				}
-//			}
 		}
 		return success
 	}

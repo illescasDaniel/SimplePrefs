@@ -45,10 +45,6 @@ public final class UserDefaultsPropertiesPreferencesManager<Value: AllModelPrope
 				genericWrapper.cacheWrapper = nil
 				genericWrapper.keychainWrapper = nil
 			}
-//			if let wrapper = (property as? _UserDefaultsKeyValueWrapperInjectedValue) {
-//				wrapper._userDefaults = self.userDefaults
-//				wrapper._registerDefault()
-//			}
 		}
 	}
 	
@@ -65,9 +61,6 @@ public final class UserDefaultsPropertiesPreferencesManager<Value: AllModelPrope
 	@discardableResult
 	public func delete() -> Bool {
 		for property in self.value.allProperties {
-//			if let wrapper = (property as? _UserDefaultsKeyValueWrapperInjectedValue) {
-//				self.userDefaults.removeObject(forKey: wrapper.key)
-//			}
 			if let genericWrapper = (property as? _GenericPropertiesWrapperProtocol), let wrapper = genericWrapper.userDefaultsWrapper {
 				wrapper._userDefaults.removeObject(forKey: wrapper.key)
 			}

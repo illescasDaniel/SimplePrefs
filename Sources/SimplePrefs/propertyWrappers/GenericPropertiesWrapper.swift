@@ -5,24 +5,22 @@
 //  Created by Daniel Illescas Romero on 01/02/2020.
 //
 
-import Foundation
-
-internal protocol _GenericPropertiesWrapperProtocol: class {
-	var cacheWrapper: _CacheKeyValueWrapperInjectedValue? { get set }
-	var userDefaultsWrapper: _UserDefaultsKeyValueWrapperInjectedValue? { get set }
-	var keychainWrapper: _KeychainKeyValueWrapperProtocol? { get set }
+internal protocol _GenericPropertyWrapper: class {
+	var cacheWrapper: _CachePropertyWrapper? { get set }
+	var userDefaultsWrapper: _UserDefaultsPropertiesWrapper? { get set }
+	var keychainWrapper: _KeychainPropertyWrapper? { get set }
 }
 
 @propertyWrapper
-final public class GenericPropertiesWrapper<T: Codable>: _GenericPropertiesWrapperProtocol {
+final public class GenericPropertyWrapper<T: Codable>: _GenericPropertyWrapper {
 	
-	public var projectedValue: GenericPropertiesWrapper<T> { self }
+	public var projectedValue: GenericPropertyWrapper<T> { self }
 	
-	internal var cache: CachePropertiesWrapper<T>?
+	internal var cache: CachePropertyWrapper<T>?
 	internal var userDefaults: UserDefaultsPropertiesWrapper<T>?
-	internal var keychain: KeychainPropertiesWrapper<T>?
+	internal var keychain: KeychainPropertyWrapper<T>?
 	
-	internal var cacheWrapper: _CacheKeyValueWrapperInjectedValue? {
+	internal var cacheWrapper: _CachePropertyWrapper? {
 		get { cache }
 		set {
 			if newValue == nil {
@@ -30,7 +28,7 @@ final public class GenericPropertiesWrapper<T: Codable>: _GenericPropertiesWrapp
 			}
 		}
 	}
-	internal var userDefaultsWrapper: _UserDefaultsKeyValueWrapperInjectedValue? {
+	internal var userDefaultsWrapper: _UserDefaultsPropertiesWrapper? {
 		get { userDefaults }
 		set {
 			if newValue == nil {
@@ -38,7 +36,7 @@ final public class GenericPropertiesWrapper<T: Codable>: _GenericPropertiesWrapp
 			}
 		}
 	}
-	internal var keychainWrapper: _KeychainKeyValueWrapperProtocol? {
+	internal var keychainWrapper: _KeychainPropertyWrapper? {
 		get { keychain }
 		set {
 			if newValue == nil {
@@ -71,10 +69,10 @@ final public class GenericPropertiesWrapper<T: Codable>: _GenericPropertiesWrapp
 	
 	//
 	
-	/// Cost is only effective for `UserDefaults` and `Keychain`
+	/// `Cost` is only effective for `Cache`
 	public init(_ key: String, cost: Int = 0, defaultValue: T? = nil) {
-		self.cache = CachePropertiesWrapper<T>(key, cost: cost, defaultValue: defaultValue)
+		self.cache = CachePropertyWrapper<T>(key, cost: cost, defaultValue: defaultValue)
 		self.userDefaults = UserDefaultsPropertiesWrapper<T>(key, defaultValue: defaultValue)
-		self.keychain = KeychainPropertiesWrapper<T>(key, defaultValue: defaultValue)
+		self.keychain = KeychainPropertyWrapper<T>(key, defaultValue: defaultValue)
 	}
 }
