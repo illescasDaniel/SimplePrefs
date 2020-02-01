@@ -10,14 +10,14 @@ import struct Foundation.Data
 import class Foundation.JSONEncoder
 import class Foundation.JSONDecoder
 
-internal protocol _UserDefaultsKeyValueWrapperInjectedValue: class {
+internal protocol _UserDefaultsPropertiesWrapper: class {
 	var key: String { get }
 	var _userDefaults: UserDefaults! { get set }
 	func _registerDefault()
 }
 
 @propertyWrapper
-final internal class UserDefaultsPropertiesWrapper<T: Codable>: PropertiesWrapper, _UserDefaultsKeyValueWrapperInjectedValue {
+final internal class UserDefaultsPropertiesWrapper<T: Codable>: StoragePropertyWrapper, _UserDefaultsPropertiesWrapper {
 	
 	internal var projectedValue: UserDefaultsPropertiesWrapper<T> { self }
 	

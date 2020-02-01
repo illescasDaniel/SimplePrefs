@@ -35,7 +35,7 @@ final public class KeychainPropertiesPreferencesManager<Value: AllModelPropertie
 	public init(defaultValue: Value) {
 		self.value = defaultValue
 		for property in self.value.allProperties {
-			if let genericWrapper = (property as? _GenericPropertiesWrapperProtocol) {
+			if let genericWrapper = (property as? _GenericPropertyWrapper) {
 				genericWrapper.cacheWrapper = nil
 				genericWrapper.userDefaultsWrapper = nil
 			}
@@ -57,7 +57,7 @@ final public class KeychainPropertiesPreferencesManager<Value: AllModelPropertie
 		let keychain = GenericPasswordStore()
 		var success = true
 		for property in self.value.allProperties {
-			if let genericWrapper = (property as? _GenericPropertiesWrapperProtocol), let key = genericWrapper.keychainWrapper?.key {
+			if let genericWrapper = (property as? _GenericPropertyWrapper), let key = genericWrapper.keychainWrapper?.key {
 				if !keychain.deleteKey(account: key) {
 					success = false
 				}

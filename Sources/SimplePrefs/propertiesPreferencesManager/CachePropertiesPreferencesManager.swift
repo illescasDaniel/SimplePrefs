@@ -46,7 +46,7 @@ final public class CachePropertiesPreferencesManager<Value: AllModelProperties>:
 			self.cache.countLimit = countLimit
 		}
 		for property in self.value.allProperties {
-			if let genericWrapper = (property as? _GenericPropertiesWrapperProtocol) {
+			if let genericWrapper = (property as? _GenericPropertyWrapper) {
 				genericWrapper.cacheWrapper?._cache = self.cache
 				genericWrapper.userDefaultsWrapper = nil
 				genericWrapper.keychainWrapper = nil

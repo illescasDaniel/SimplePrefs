@@ -9,12 +9,12 @@ import struct Foundation.Data
 import class Foundation.JSONEncoder
 import class Foundation.JSONDecoder
 
-internal protocol _KeychainKeyValueWrapperProtocol: class {
+internal protocol _KeychainPropertyWrapper: class {
 	var key: String { get }
 }
 
 @propertyWrapper
-final internal class KeychainPropertyWrapper<T: Codable>: PropertiesWrapper, _KeychainKeyValueWrapperProtocol {
+final internal class KeychainPropertyWrapper<T: Codable>: StoragePropertyWrapper, _KeychainPropertyWrapper {
 	
 	private let keychain = GenericPasswordStore()
 	

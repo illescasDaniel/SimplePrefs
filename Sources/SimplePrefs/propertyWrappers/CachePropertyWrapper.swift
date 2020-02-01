@@ -8,12 +8,12 @@
 import class Foundation.NSCache
 import class Foundation.NSString
 
-internal protocol _CacheKeyValueWrapperInjectedValue: class {
+internal protocol _CachePropertyWrapper: class {
 	var _cache: NSCache<NSString, AnyObject>! { get set }
 }
 
 @propertyWrapper
-final internal class CachePropertyWrapper<T>: PropertiesWrapper, _CacheKeyValueWrapperInjectedValue {
+final internal class CachePropertyWrapper<T>: StoragePropertyWrapper, _CachePropertyWrapper {
 	
 	internal var projectedValue: CachePropertyWrapper<T> { self }
 	
