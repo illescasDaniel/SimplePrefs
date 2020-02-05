@@ -6,6 +6,9 @@
 
 A simple way to manage your app preferences in your Swift projects (compatible with iOS, macOS, etc).
 
+**⚠️ Warning:** the app uses the Apple library ***CryptoKit***. **You need to add a flag to your project** in order to compile it for a lower version than what the framework supports.
+This is not something I can fix since since is not my fault. See more: https://stackoverflow.com/questions/58287922/cryptokit-craches-app-on-phones-with-ios-version-below-13
+
 ## API:
 ```swift
 associatedtype Value: Codable
