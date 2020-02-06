@@ -28,13 +28,10 @@ func delete() -> Bool
 - `SimplePrefs.File`: saves preferences as a **plain JSON file**
 - `SimplePrefs.EncryptedFile`: saves preferences as en **encrypted JSON file**
 - `SimplePrefs.Keychain`: saves preferences on **user's keychain**, the whole model object is saved with a **single key**
-- `SimplePrefs.UserDefaults`: saves preferences using **`UserDefaults`**, but is **not** in sync with the current values of `UserDefaults` until you call `load()` or `save()` methods  
+- `SimplePrefs.UserDefaults`: saves preferences using **`UserDefaults`**  
 - `SimplePrefs.Mock`: doesn't persist anything but conforms to the same protocol as the others, it just uses a default instance passed in the constructor.
 
-Also, there are these "**Properties preferences managers**", which behave similarly but you must create a model with specific keys for each value:
-- `SimplePrefs.UserDefaultsProperties`: saves preferences using **`UserDefaults`**, is always in sync with the current values of `UserDefaults`
-- `SimplePrefs.CacheProperties`: saves preferences using **`NSCache`**, is always in sync with the current values of `NSCache`
-- `SimplePrefs.KeychainProperties`: saves preferences on **user's keychain**, **every value has its own key**
+**Note:** all preferences managers sync with their respective underlying storage ONLY when calling the `load` or `save` methods.
 
 ## Usage
 
@@ -47,7 +44,7 @@ struct UserPreferences: Codable {
 }
 
 // Only necessary for `SimplePrefs.UserDefaultsKey`
-extension UserPreferences: CodableWithKeys {
+extension UserPreferences: UserDefaultsKey {
     // It is recommended to use custom key values like these in order to save
     // unique keys into userDefaults (in case you use the same user defaults suite for
     // two different preferences)
@@ -56,25 +53,6 @@ extension UserPreferences: CodableWithKeys {
         case isDarkModeEnabled = "UserPreferences.isDarkModeEnabled"
         case person = "UserPreferences.person"
     }
-}
-```
-For **Properties preferences managers**:
-```swift
-struct UserPreferencesProperties: SimplePrefs.AllProperties {
-	typealias key = SimplePrefs.PropertiesKey
-
-	@key("age")
-	var age: Int?
-	
-	@key("isDarkModeEnabled", defaultValue: false)
-	var isDarkModeEnabled: Bool?
-	
-	@key("person", defaultValue: Person(name: "John"))
-	var person: Person?
-
-	var allProperties: [Any?] {[
-		$age, $isDarkModeEnabled, $person
-	]}
 }
 ```
 
