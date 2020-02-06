@@ -12,17 +12,10 @@ public enum SimplePrefs {
 	public typealias UserDefaults = UserDefaultsPreferencesManager
 	public typealias UserDefaultsKey = CodableModelWithStringKeysCaseIterable
 	
-	public typealias KeychainProperties = KeychainPropertiesPreferencesManager
-	public typealias CacheProperties = CachePropertiesPreferencesManager
-	public typealias UserDefaultsProperties = UserDefaultsPropertiesPreferencesManager
-	public typealias PropertiesKey = GenericPropertyWrapper
-	
 	#if canImport(CryptoKit)
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
 	public typealias EncryptedFile = EncryptedFilePreferencesManager
 	#endif
 	
 	public typealias Mock = DefaultMockPreferencesManager
-	
-	public typealias AllProperties = AllModelProperties
 }
