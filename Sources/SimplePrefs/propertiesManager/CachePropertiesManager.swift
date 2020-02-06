@@ -24,19 +24,11 @@ SOFTWARE.
 import class Foundation.NSCache
 import class Foundation.NSString
 
-final public class CachePropertiesPreferencesManager<Value: AllModelProperties>: PreferencesManager, PreferencesManagerInternals {
+public final class CachePropertiesManager<Value> {
 	
-	internal var value: Value
+	private let value: Value
+	private let cache = NSCache<NSString, AnyObject>()
 	
-	/// `UserDefaults` instance to use. `UserDefaults.standard` by default.
-	public let cache = NSCache<NSString, AnyObject>()
-	
-	/// `UserDefaults` preferences manager
-	/// - Parameters:
-	///   - defaultValue: Default prefrerences data value.
-	///   - userDefaults: `UserDefaults` instance to use. `UserDefaults.standard` by default.
-	///   - totalCostLimit: The maximum total cost that the cache can hold before it starts evicting objects.
-	///   - countLimit: The maximum number of objects the cache should hold.
 	public init(defaultValue: Value, totalCostLimit: Int? = nil, countLimit: Int? = nil) {
 		self.value = defaultValue
 		if let totalCostLimit = totalCostLimit {
@@ -45,28 +37,44 @@ final public class CachePropertiesPreferencesManager<Value: AllModelProperties>:
 		if let countLimit = countLimit {
 			self.cache.countLimit = countLimit
 		}
-		for property in self.value.allProperties {
-			if let genericWrapper = (property as? _GenericPropertyWrapper) {
-				genericWrapper.cacheWrapper?._cache = self.cache
-				genericWrapper.userDefaultsWrapper = nil
-				genericWrapper.keychainWrapper = nil
-			}
+	}
+	
+	public func getProperty<T>(_ keyPath: KeyPath<Value, PropertyKey<T>>) -> T? {
+		
+		let property = value[keyPath: keyPath]
+		let (key, defaultValue) = (property.key as NSString, property.defaultValue)
+		
+		if T.self is AnyObject.Type {
+			return cache.object(forKey: key) as? T ?? defaultValue
+		}
+		return (cache.object(forKey: key) as? Box<T>)?.value ?? defaultValue
+	}
+	
+	public func setProperty<T>(_ keyPath: KeyPath<Value,PropertyKey<T>>, _ newValue: T?, withCost cost: Int = 0) {
+		
+		let property = value[keyPath: keyPath]
+		let key = property.key as NSString
+		
+		guard let newValue = newValue else {
+			cache.removeObject(forKey: key)
+			return
+		}
+		
+		if T.self is AnyObject.Type {
+			cache.setObject(newValue as AnyObject, forKey: key, cost: cost)
+		} else {
+			cache.setObject(Box(newValue), forKey: key, cost: cost)
 		}
 	}
 	
-	@discardableResult
-	public func load() -> Bool {
-		return true
-	}
-	
-	@discardableResult
-	public func save() -> Bool {
-		return true
+	public subscript<T>(keyPath: KeyPath<Value, PropertyKey<T>>) -> T? {
+		get { getProperty(keyPath) }
+		set { setProperty(keyPath, newValue) }
 	}
 	
 	@discardableResult
 	public func delete() -> Bool {
-		self.cache.removeAllObjects()
+		cache.removeAllObjects()
 		return true
 	}
 }

@@ -1,16 +1,16 @@
 //
 //  File.swift
+//  
 //
-//
-//  Created by Daniel Illescas Romero on 06/01/2020.
+//  Created by Daniel Illescas Romero on 06/02/2020.
 //
 
 @testable import enum SimplePrefs.SimplePrefs
 
-struct UserPreferencesProperties: SimplePrefs.AllProperties {
-
-	typealias key = SimplePrefs.PropertiesKey
-
+struct UserPreferencesProperties {
+	
+	typealias key = SimplePrefs.Key
+	
 	@key("age")
 	var age: Int?
 	
@@ -19,8 +19,11 @@ struct UserPreferencesProperties: SimplePrefs.AllProperties {
 	
 	@key("person", defaultValue: Person(name: "John"))
 	var person: Person?
+}
 
-	var allProperties: [Any?] {[
+// necessary for UserDefaults or Keychain
+extension UserPreferencesProperties: SimplePrefs.AllKeys {
+	var allProperties: [SimplePrefs.KeyProtocol] {[
 		$age, $isDarkModeEnabled, $person
 	]}
 }

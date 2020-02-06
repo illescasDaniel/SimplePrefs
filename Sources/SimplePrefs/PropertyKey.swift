@@ -21,9 +21,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-internal final class Box<T> {
-	let value: T
-	init(_ value: T) {
-		self.value = value
+public protocol PropertyKeyProtocol {
+	var key: String { get }
+}
+
+@propertyWrapper
+public struct PropertyKey<T>: PropertyKeyProtocol {
+	
+	public let key: String
+	public let defaultValue: T?
+	
+	public var projectedValue: PropertyKey { self }
+	
+	public var wrappedValue: T {
+		get { fatalError() }
+		set {  }
+	}
+	
+	init(_ key: String, defaultValue: T? = nil) {
+		self.key = key
+		self.defaultValue = defaultValue
 	}
 }

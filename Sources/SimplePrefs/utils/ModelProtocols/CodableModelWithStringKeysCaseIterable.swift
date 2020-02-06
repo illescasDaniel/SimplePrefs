@@ -21,9 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-internal final class Box<T> {
-	let value: T
-	init(_ value: T) {
-		self.value = value
-	}
+public protocol CodableModelWithStringKeysCaseIterable: Codable {
+	associatedtype CodingKeys: CodingKey, CaseIterable, RawRepresentable where CodingKeys.RawValue == String
 }
