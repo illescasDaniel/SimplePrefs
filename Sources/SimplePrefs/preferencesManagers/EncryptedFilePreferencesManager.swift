@@ -22,11 +22,15 @@ SOFTWARE.
 */
 
 #if canImport(CryptoKit)
-import Foundation
-import CryptoKit
+import class Foundation.FileManager
+import class Foundation.JSONEncoder
+import class Foundation.JSONDecoder
+import struct Foundation.Data
+import struct CryptoKit.SymmetricKey
+import enum CryptoKit.ChaChaPoly
 
 @available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
-public class EncryptedFilePreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
+public final class EncryptedFilePreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	

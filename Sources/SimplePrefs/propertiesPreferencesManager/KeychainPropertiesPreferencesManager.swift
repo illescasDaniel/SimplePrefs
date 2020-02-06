@@ -21,26 +21,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-public protocol MockPreferencesManager: PreferencesManager {}
-public extension MockPreferencesManager {
-	func load() -> Bool { true }
-	func save() -> Bool { true }
-	func delete() -> Bool { true }
-}
+import class Foundation.NSCache
+import class Foundation.NSString
 
-public class DefaultMockPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
+final public class KeychainPropertiesPreferencesManager<Value: AllModelProperties>: PreferencesManager, PreferencesManagerInternals {
+	
 	internal var value: Value
 	
+	/// `UserDefaults` preferences manager
+	/// - Parameters:
+	///   - defaultValue: Default prefrerences data value
+	///   - userDefaults: `UserDefaults` instance to use. `UserDefaults.standard` by default.
 	public init(defaultValue: Value) {
 		self.value = defaultValue
+		for property in self.value.allProperties {
+			if let genericWrapper = (property as? _GenericPropertyWrapper) {
+				genericWrapper.cacheWrapper = nil
+				genericWrapper.userDefaultsWrapper = nil
+			}
+		}
 	}
 	
 	@discardableResult
-	public func load() -> Bool { true }
+	public func load() -> Bool {
+		return true
+	}
 	
 	@discardableResult
-	public func save() -> Bool { true }
+	public func save() -> Bool {
+		return true
+	}
 	
 	@discardableResult
-	public func delete() -> Bool { true }
+	public func delete() -> Bool {
+		let keychain = GenericPasswordStore()
+		var success = true
+		for property in self.value.allProperties {
+			if let genericWrapper = (property as? _GenericPropertyWrapper), let key = genericWrapper.keychainWrapper?.key {
+				if !keychain.deleteKey(account: key) {
+					success = false
+				}
+			}
+		}
+		return success
+	}
 }

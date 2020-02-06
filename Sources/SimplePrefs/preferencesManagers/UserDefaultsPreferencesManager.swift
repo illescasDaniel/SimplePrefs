@@ -21,13 +21,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import Foundation
+import class Foundation.JSONEncoder
+import class Foundation.JSONDecoder
+import class Foundation.UserDefaults
+import class Foundation.JSONSerialization
 
-public protocol CodableWithKeys: Codable {
-	associatedtype CodingKeys: CodingKey, CaseIterable, RawRepresentable where CodingKeys.RawValue == String
-}
-
-public class UserDefaultsPreferencesManager<Value: CodableWithKeys>: PreferencesManager, PreferencesManagerInternals {
+public final class UserDefaultsPreferencesManager<Value: CodableModelWithStringKeysCaseIterable>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	

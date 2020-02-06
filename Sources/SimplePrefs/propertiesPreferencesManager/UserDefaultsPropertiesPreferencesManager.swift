@@ -21,53 +21,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import class Foundation.JSONEncoder
-import class Foundation.JSONDecoder
+import class Foundation.UserDefaults
 
-public final class KeychainPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
+public final class UserDefaultsPropertiesPreferencesManager<Value: AllModelProperties>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	
-	/// Similar to a dictionary key, used to identify the saved data. (Is not an encryption key)
-	public let key: String
+	/// `UserDefaults` instance to use. `UserDefaults.standard` by default.
+	public let userDefaults: UserDefaults
 	
-	private let genericPasswordStore = GenericPasswordStore()
-	
-	/// Keychain preferences manager
+	/// `UserDefaults` preferences manager
 	/// - Parameters:
 	///   - defaultValue: Default prefrerences data value
-	///   - dataKey: 256bits/32bytes data key
-	///   - path: Where the preferences file is saved
-	///   - fileName: Preferences file name
-	public init(defaultValue: Value, key: String) {
+	///   - userDefaults: `UserDefaults` instance to use. `UserDefaults.standard` by default.
+	public init(defaultValue: Value, userDefaults: UserDefaults = .standard) {
 		self.value = defaultValue
-		self.key = key
+		self.userDefaults = userDefaults
+		
+		for property in self.value.allProperties {
+			if let genericWrapper = (property as? _GenericPropertyWrapper) {
+				genericWrapper.userDefaultsWrapper?._userDefaults = self.userDefaults
+				genericWrapper.userDefaultsWrapper?._registerDefault()
+				genericWrapper.cacheWrapper = nil
+				genericWrapper.keychainWrapper = nil
+			}
+		}
 	}
 	
 	@discardableResult
 	public func load() -> Bool {
-		if let data = genericPasswordStore.readKey(account: self.key),
-			let instance = try? JSONDecoder().decode(Value.self, from: data) {
-			self.value = instance
-			return true
-		}
-		return false
+		return true
 	}
 	
 	@discardableResult
 	public func save() -> Bool {
-		guard let data = try? JSONEncoder().encode(self.value) else {
-			return false
-		}
-		if genericPasswordStore.storeKey(data, account: self.key) == false {
-			return genericPasswordStore.updateKey(data, account: self.key)
-		} else {
-			return true
-		}
+		return true
 	}
 	
 	@discardableResult
 	public func delete() -> Bool {
-		return genericPasswordStore.deleteKey(account: self.key)
+		for property in self.value.allProperties {
+			if let genericWrapper = (property as? _GenericPropertyWrapper), let wrapper = genericWrapper.userDefaultsWrapper {
+				wrapper._userDefaults.removeObject(forKey: wrapper.key)
+			}
+		}
+		return true
 	}
 }

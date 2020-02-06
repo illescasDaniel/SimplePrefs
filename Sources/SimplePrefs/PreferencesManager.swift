@@ -21,10 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import Foundation
-
 public protocol PreferencesManagerValue {
-	associatedtype Value: Codable
+	associatedtype Value
 }
 
 public protocol PreferencesManager: class, PreferencesManagerValue {

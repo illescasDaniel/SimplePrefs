@@ -21,53 +21,52 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import class Foundation.JSONEncoder
-import class Foundation.JSONDecoder
+import class Foundation.NSCache
+import class Foundation.NSString
 
-public final class KeychainPreferencesManager<Value: Codable>: PreferencesManager, PreferencesManagerInternals {
+final public class CachePropertiesPreferencesManager<Value: AllModelProperties>: PreferencesManager, PreferencesManagerInternals {
 	
 	internal var value: Value
 	
-	/// Similar to a dictionary key, used to identify the saved data. (Is not an encryption key)
-	public let key: String
+	/// `UserDefaults` instance to use. `UserDefaults.standard` by default.
+	public let cache = NSCache<NSString, AnyObject>()
 	
-	private let genericPasswordStore = GenericPasswordStore()
-	
-	/// Keychain preferences manager
+	/// `UserDefaults` preferences manager
 	/// - Parameters:
-	///   - defaultValue: Default prefrerences data value
-	///   - dataKey: 256bits/32bytes data key
-	///   - path: Where the preferences file is saved
-	///   - fileName: Preferences file name
-	public init(defaultValue: Value, key: String) {
+	///   - defaultValue: Default prefrerences data value.
+	///   - userDefaults: `UserDefaults` instance to use. `UserDefaults.standard` by default.
+	///   - totalCostLimit: The maximum total cost that the cache can hold before it starts evicting objects.
+	///   - countLimit: The maximum number of objects the cache should hold.
+	public init(defaultValue: Value, totalCostLimit: Int? = nil, countLimit: Int? = nil) {
 		self.value = defaultValue
-		self.key = key
+		if let totalCostLimit = totalCostLimit {
+			self.cache.totalCostLimit = totalCostLimit
+		}
+		if let countLimit = countLimit {
+			self.cache.countLimit = countLimit
+		}
+		for property in self.value.allProperties {
+			if let genericWrapper = (property as? _GenericPropertyWrapper) {
+				genericWrapper.cacheWrapper?._cache = self.cache
+				genericWrapper.userDefaultsWrapper = nil
+				genericWrapper.keychainWrapper = nil
+			}
+		}
 	}
 	
 	@discardableResult
 	public func load() -> Bool {
-		if let data = genericPasswordStore.readKey(account: self.key),
-			let instance = try? JSONDecoder().decode(Value.self, from: data) {
-			self.value = instance
-			return true
-		}
-		return false
+		return true
 	}
 	
 	@discardableResult
 	public func save() -> Bool {
-		guard let data = try? JSONEncoder().encode(self.value) else {
-			return false
-		}
-		if genericPasswordStore.storeKey(data, account: self.key) == false {
-			return genericPasswordStore.updateKey(data, account: self.key)
-		} else {
-			return true
-		}
+		return true
 	}
 	
 	@discardableResult
 	public func delete() -> Bool {
-		return genericPasswordStore.deleteKey(account: self.key)
+		self.cache.removeAllObjects()
+		return true
 	}
 }
