@@ -38,7 +38,7 @@ public struct PropertyKey<T>: PropertyKeyProtocol {
 		set {  }
 	}
 	
-	init(_ key: String, defaultValue: T? = nil) {
+	public init(_ key: String, defaultValue: T? = nil) {
 		self.key = key
 		self.defaultValue = defaultValue
 	}
