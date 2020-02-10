@@ -9,7 +9,7 @@ A simple way to manage your app preferences in your Swift projects (compatible w
 **⚠️ Warning:** the app uses the Apple library ***CryptoKit***. **You need to add a flag to your project** in order to compile it for a lower version than what the framework supports.
 This is not something I can fix since since is not my fault. See more: https://stackoverflow.com/questions/58287922/cryptokit-craches-app-on-phones-with-ios-version-below-13
 
-## API:
+## API (Preferences Managers):
 ```swift
 associatedtype Value: Codable
 
@@ -34,10 +34,10 @@ func delete() -> Bool
 **Note:** all preferences managers sync with their respective underlying storage ONLY when calling the `load` or `save` methods.
 
 Also, there are these "**Properties managers**", which behave similarly but you must create a model with specific keys for each value. 
-Also **they are in sync with their underlying storage** all the time:
+**These are in sync with their underlying storage** all the time:
 - `SimplePrefs.UserDefaultsProperties`: saves preferences using **`UserDefaults`**.
 - `SimplePrefs.CacheProperties`: saves preferences using **`NSCache`**.
-- `SimplePrefs.KeychainProperties`: saves preferences on **user's keychain**, **every value has its own key**.
+- `SimplePrefs.KeychainProperties`: saves preferences on user's keychain, **every value has its own key**.
 
 ## Usage
 
@@ -49,7 +49,7 @@ struct UserPreferences: Codable {
     var person: Person = .init(name: "John") // must conform to `Codable`
 }
 
-// Only necessary for `SimplePrefs.UserDefaultsKey`
+// Only necessary for `SimplePrefs.UserDefaults`
 extension UserPreferences: UserDefaultsKey {
     // It is recommended to use custom key values like these in order to save
     // unique keys into userDefaults (in case you use the same user defaults suite for

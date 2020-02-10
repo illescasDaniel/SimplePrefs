@@ -14,7 +14,7 @@ struct UserPreferences: Codable {
 	var car: Car = .init(brand: "Toyota", model: "Celica", year: 1970)
 }
 
-// necessary for `UserDefaultsPreferencesManager`
+// necessary for `SimplePrefs.UserDefaults`
 extension UserPreferences: SimplePrefs.UserDefaultsKey {
 	// It is recommended to use custom key values like these in order to save
 	// unique keys into userDefaults (in case you use the same user defaults suite for
