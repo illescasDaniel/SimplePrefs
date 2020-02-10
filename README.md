@@ -25,13 +25,19 @@ func delete() -> Bool
 ```
 
 ### Specific **preferences managers** available:
-- `SimplePrefs.File`: saves preferences as a **plain JSON file**
-- `SimplePrefs.EncryptedFile`: saves preferences as en **encrypted JSON file**
-- `SimplePrefs.Keychain`: saves preferences on **user's keychain**, the whole model object is saved with a **single key**
-- `SimplePrefs.UserDefaults`: saves preferences using **`UserDefaults`**  
+- `SimplePrefs.File`: saves preferences as a **plain JSON file**.
+- `SimplePrefs.EncryptedFile`: saves preferences as en **encrypted JSON file**.
+- `SimplePrefs.Keychain`: saves preferences on **user's keychain**, the whole model object is saved with a **single key**.
+- `SimplePrefs.UserDefaults`: saves preferences using **`UserDefaults`**  .
 - `SimplePrefs.Mock`: doesn't persist anything but conforms to the same protocol as the others, it just uses a default instance passed in the constructor.
 
 **Note:** all preferences managers sync with their respective underlying storage ONLY when calling the `load` or `save` methods.
+
+Also, there are these "**Properties managers**", which behave similarly but you must create a model with specific keys for each value. 
+Also **they are in sync with their underlying storage** all the time:
+- `SimplePrefs.UserDefaultsProperties`: saves preferences using **`UserDefaults`**.
+- `SimplePrefs.CacheProperties`: saves preferences using **`NSCache`**.
+- `SimplePrefs.KeychainProperties`: saves preferences on **user's keychain**, **every value has its own key**.
 
 ## Usage
 
@@ -54,6 +60,32 @@ extension UserPreferences: UserDefaultsKey {
         case person = "UserPreferences.person"
     }
 }
+```
+For **Properties managers**:
+```swift
+import enum SimplePrefs.SimplePrefs
+
+struct UserPreferencesProperties {
+    
+    typealias key = SimplePrefs.Properties.Key
+    
+    @key("age")
+    var age: Int?
+    
+    @key("isDarkModeEnabled", defaultValue: false)
+    var isDarkModeEnabled: Bool?
+    
+    @key("person", defaultValue: Person(name: "John"))
+    var person: Person?
+}
+
+// necessary for UserDefaults or Keychain
+extension UserPreferencesProperties: SimplePrefs.Properties.KeysProtocol {
+    var allProperties: SimplePrefs.Properties.Keys {[
+        $age, $isDarkModeEnabled, $person
+    ]}
+}
+
 ```
 
 The recommended way of using your preferences:
@@ -83,6 +115,10 @@ appPrefs[\.isDarkModeEnabled] // gets a value
 appPrefs[\.age] = 60 // sets a value
 // also: appPrefs.setProperty(\.age, value: 60)
 // also: appPrefs.getProperty(\.isDarkModeEnabled)
+
+// for "properties managers":
+appPrefs[\.$isDarkModeEnabled] // gets a value
+appPrefs[\.$age] = 60 // sets a value
 
 appPrefs.save() // - saves preferences
 

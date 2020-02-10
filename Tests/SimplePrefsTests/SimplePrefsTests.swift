@@ -13,6 +13,7 @@ final class SimplePrefsTests: XCTestCase {
 	let newAge: Int = 100
 	let isDark = true
 	let person = Person(name: "Daniel")
+	let car = Car(brand: "Mercedez", model: "F1", year: 3243)
 	
 	//
 	
@@ -26,11 +27,13 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs.getProperty(\.age), nil)
 		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
 		XCTAssertEqual(prefs[\.person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
 		
 		// new values
 		prefs[\.age] = newAge
 		prefs.setProperty(\.isDarkModeEnabled, isDark)
 		prefs[\.person] = person
+		prefs[\.car] = car
 		
 		// saving
 		XCTAssertTrue(prefs.save())
@@ -41,6 +44,7 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs[\.age], newAge)
 		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
 		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
 		
 		XCTAssertTrue(prefs.delete())
 	}
@@ -59,11 +63,13 @@ final class SimplePrefsTests: XCTestCase {
 			XCTAssertEqual(prefs.getProperty(\.age), nil)
 			XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
 			XCTAssertEqual(prefs[\.person], Person(name: "John"))
+			XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
 			
 			// new values
 			prefs[\.age] = newAge
 			prefs.setProperty(\.isDarkModeEnabled, isDark)
 			prefs[\.person] = person
+			prefs[\.car] = car
 			
 			// saving
 			XCTAssertTrue(prefs.save())
@@ -74,6 +80,7 @@ final class SimplePrefsTests: XCTestCase {
 			XCTAssertEqual(prefs[\.age], newAge)
 			XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
 			XCTAssertEqual(prefs[\.person], person)
+			XCTAssertEqual(prefs[\.car], car)
 			
 			XCTAssertTrue(prefs.delete())
 		} else {
@@ -83,6 +90,42 @@ final class SimplePrefsTests: XCTestCase {
 		print("EncryptedFilePreferencesManager not compatible")
 		#endif
 	}
+	
+	/*
+	// Keychain doesn't work in Swift package manager (?)
+	func testKeychainPrefs() {
+		
+		let prefs = SimplePrefs.Keychain<UserPreferences>(
+			defaultValue: .init(),
+			key: "com.myname.simpleprefs.tests"
+		)
+		prefs.delete()
+		
+		// default values
+		XCTAssertEqual(prefs[\.age], nil)
+		XCTAssertEqual(prefs.getProperty(\.age), nil)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
+		
+		// new values
+		prefs[\.age] = newAge
+		prefs.setProperty(\.isDarkModeEnabled, isDark)
+		prefs[\.person] = person
+		prefs[\.car] = car
+		
+		// saving
+		XCTAssertTrue(prefs.save())
+		
+		// loading and checking values
+		XCTAssertTrue(prefs.load())
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
+		
+		XCTAssertTrue(prefs.delete())
+	}*/
 	
 	func testUserDefaultPrefs() {
 		
@@ -94,11 +137,13 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs.getProperty(\.age), nil)
 		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
 		XCTAssertEqual(prefs[\.person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
 		
 		// new values
 		prefs[\.age] = newAge
 		prefs.setProperty(\.isDarkModeEnabled, isDark)
 		prefs[\.person] = person
+		prefs[\.car] = car
 		
 		// saving
 		XCTAssertTrue(prefs.save())
@@ -108,41 +153,114 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs[\.age], newAge)
 		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
 		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
 		
 		XCTAssertTrue(prefs.delete())
 	}
 	
-	// Keychain doesn't work in Swift package manager (?)
-	/*func testKeychainPrefs() {
+	func testUserDefaultsProperties() {
 		
-		let prefs = KeychainPreferencesManager<UserPreferences>(
-			defaultValue: .init(),
-			key: "com.myname.simpleprefs.tests"
-		)
+		let prefs = SimplePrefs.UserDefaultsProperties<UserPreferencesProperties>(defaultValue: .init())
 		prefs.delete()
 		
 		// default values
-		XCTAssertEqual(prefs[\.age], nil)
-		XCTAssertEqual(prefs.getProperty(\.age), nil)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
-		XCTAssertEqual(prefs[\.person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.$age], nil)
+		XCTAssertEqual(prefs.getProperty(\.$age), nil)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.$person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.$car], Car(brand: "Toyota", model: "Celica", year: 1970))
 		
 		// new values
-		prefs[\.age] = newAge
-		prefs.setProperty(\.isDarkModeEnabled, isDark)
-		prefs[\.person] = person
+		prefs[\.$age] = newAge
+		prefs.setProperty(\.$isDarkModeEnabled, isDark)
+		prefs[\.$person] = person
+		prefs[\.$car] = car
 		
-		// saving
-		XCTAssertTrue(prefs.save())
-		
-		// loading and checking values
-		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs[\.age], newAge)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
-		XCTAssertEqual(prefs[\.person], person)
+		// checking values
+		XCTAssertEqual(prefs[\.$age], newAge)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.$person], person)
+		XCTAssertEqual(prefs[\.$car], car)
 		
 		XCTAssertTrue(prefs.delete())
-	}*/
+		
+		// default values
+		XCTAssertEqual(prefs[\.$age], nil)
+		XCTAssertEqual(prefs.getProperty(\.$age), nil)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.$person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.$car], Car(brand: "Toyota", model: "Celica", year: 1970))
+	}
+	
+	func testCacheProperties() {
+		
+		let prefs = SimplePrefs.CacheProperties<UserPreferencesProperties>(defaultValue: .init())
+		prefs.delete()
+		
+		// default values
+		XCTAssertEqual(prefs[\.$age], nil)
+		XCTAssertEqual(prefs.getProperty(\.$age), nil)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.$person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.$car], Car(brand: "Toyota", model: "Celica", year: 1970))
+		
+		// new values
+		prefs[\.$age] = newAge
+		prefs.setProperty(\.$isDarkModeEnabled, isDark)
+		prefs[\.$person] = person
+		prefs[\.$car] = car
+		
+		// checking values
+		XCTAssertEqual(prefs[\.$age], newAge)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.$person], person)
+		XCTAssertEqual(prefs[\.$car], car)
+		
+		XCTAssertTrue(prefs.delete())
+		
+		// default values
+		XCTAssertEqual(prefs[\.$age], nil)
+		XCTAssertEqual(prefs.getProperty(\.$age), nil)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.$person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.$car], Car(brand: "Toyota", model: "Celica", year: 1970))
+	}
+	
+	// Keychain doesn't work in Swift package manager (?)
+	/*func testKeychainProperties() {
+		
+		let prefs = SimplePrefs.KeychainProperties<UserPreferencesProperties>(defaultValue: .init())
+		prefs.delete()
+		
+		// default values
+		XCTAssertEqual(prefs[\.$age], nil)
+		XCTAssertEqual(prefs.getProperty(\.$age), nil)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.$person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.$car], Car(brand: "Toyota", model: "Celica", year: 1970))
+		
+		// new values
+		prefs[\.$age] = newAge
+		prefs.setProperty(\.$isDarkModeEnabled, isDark)
+		prefs[\.$person] = person
+		prefs[\.$car] = car
+		
+		// checking values
+		XCTAssertEqual(prefs[\.$age], newAge)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.$person], person)
+		XCTAssertEqual(prefs[\.$car], car)
+		
+		XCTAssertTrue(prefs.delete())
+	
+		// default values
+		XCTAssertEqual(prefs[\.$age], nil)
+		XCTAssertEqual(prefs.getProperty(\.$age), nil)
+		XCTAssertEqual(prefs[\.$isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.$person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.$car], Car(brand: "Toyota", model: "Celica", year: 1970))
+	}
+*/
 	
 	//
 	
@@ -162,6 +280,7 @@ final class SimplePrefsTests: XCTestCase {
 			prefs[\.isDarkModeEnabled],
 			prefs.userDefaults.bool(forKey: UserPreferences.CodingKeys.isDarkModeEnabled.rawValue)
 		)
+		
 		guard let personData = try? JSONEncoder().encode(prefs[\.person]),
 			let personDictionary = (try? JSONSerialization.jsonObject(with: personData)) as? [String: Any] else {
 			XCTAssert(false, "Error encoding person object")
@@ -180,10 +299,29 @@ final class SimplePrefsTests: XCTestCase {
 			userDefaultsPersonDict[Person.CodingKeys.name.rawValue] as? String
 		)
 		
+		guard let carData = try? JSONEncoder().encode(prefs[\.car]),
+			let carDictionary = (try? JSONSerialization.jsonObject(with: carData)) as? [String: Any] else {
+			XCTAssert(false, "Error encoding car object")
+			return
+		}
+		guard let userDefaultsCarDict = prefs.userDefaults.dictionary(forKey: UserPreferences.CodingKeys.car.rawValue) else {
+			XCTAssert(false, "Error obtaining car dictionary from user defaults")
+			return
+		}
+		XCTAssertEqual(
+			carDictionary.keys,
+			userDefaultsCarDict.keys
+		)
+		XCTAssertEqual(
+			carDictionary[Car.CodingKeys.brand.rawValue] as? String,
+			userDefaultsCarDict[Car.CodingKeys.brand.rawValue] as? String
+		)
+		
 		// new values
 		prefs[\.age] = newAge
 		prefs[\.isDarkModeEnabled] = isDark
 		prefs[\.person] = person
+		prefs[\.car] = car
 		
 		// saving
 		XCTAssertTrue(prefs.save())
@@ -193,6 +331,7 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs[\.age], newAge)
 		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
 		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
 		
 		XCTAssertTrue(prefs.delete())
 	}
@@ -201,6 +340,9 @@ final class SimplePrefsTests: XCTestCase {
 		("testFilePrefs", testFilePrefs),
 		("testEncryptedFilePrefs", testEncryptedFilePrefs),
 		("testUserDefaultPrefs", testUserDefaultPrefs),
+		("testUserDefaultsProperties", testUserDefaultsProperties),
+		("testCacheProperties", testCacheProperties),
+		//("testKeychainProperties", testKeychainProperties),
 		//("testKeychainPrefs", testKeychainPrefs),
 		("testRegisterDefaultsInUserDefaultPrefs", testRegisterDefaultsInUserDefaultPrefs)
 	]
