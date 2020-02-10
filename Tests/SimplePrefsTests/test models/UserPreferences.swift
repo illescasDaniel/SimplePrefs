@@ -11,6 +11,7 @@ struct UserPreferences: Codable {
 	var age: Int?
 	var isDarkModeEnabled: Bool = false
 	var person: Person = .init(name: "John")
+	var car: Car = .init(brand: "Toyota", model: "Celica", year: 1970)
 }
 
 // necessary for `UserDefaultsPreferencesManager`
@@ -22,5 +23,6 @@ extension UserPreferences: SimplePrefs.UserDefaultsKey {
 		case age = "UserPreferences.age"
 		case isDarkModeEnabled = "UserPreferences.isDarkModeEnabled"
 		case person = "UserPreferences.person"
+		case car = "UserPreferences.car"
 	}
 }

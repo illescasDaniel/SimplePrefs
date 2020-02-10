@@ -9,7 +9,7 @@
 
 struct UserPreferencesProperties {
 	
-	typealias key = SimplePrefs.Key
+	typealias key = SimplePrefs.Properties.Key
 	
 	@key("age")
 	var age: Int?
@@ -19,11 +19,14 @@ struct UserPreferencesProperties {
 	
 	@key("person", defaultValue: Person(name: "John"))
 	var person: Person?
+	
+	@key("car", defaultValue: Car(brand: "Toyota", model: "Celica", year: 1970))
+	var car: Car?
 }
 
 // necessary for UserDefaults or Keychain
-extension UserPreferencesProperties: SimplePrefs.AllKeys {
-	var allProperties: [SimplePrefs.KeyProtocol] {[
-		$age, $isDarkModeEnabled, $person
+extension UserPreferencesProperties: SimplePrefs.Properties.KeysProtocol {
+	var allProperties: SimplePrefs.Properties.Keys {[
+		$age, $isDarkModeEnabled, $person, $car
 	]}
 }

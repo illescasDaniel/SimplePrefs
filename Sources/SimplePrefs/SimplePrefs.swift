@@ -32,8 +32,11 @@ public enum SimplePrefs {
 	public typealias CacheProperties = CachePropertiesManager
 	public typealias UserDefaultsProperties = UserDefaultsPropertiesManager
 	
-	public typealias KeyProtocol = PropertyKeyProtocol
-	public typealias Key = PropertyKey
+	enum Properties {
+		public typealias Key = PropertyKey
+		public typealias Keys = [PropertyKeyProtocol]
+		public typealias KeysProtocol = AllPropertyKeys
+	}
 	
 	#if canImport(CryptoKit)
 	@available(iOS 13.0, OSX 10.15, watchOS 6.0, tvOS 13.0, *)
@@ -41,6 +44,4 @@ public enum SimplePrefs {
 	#endif
 	
 	public typealias Mock = DefaultMockPreferencesManager
-	
-	public typealias AllKeys = AllPropertyKeys
 }
