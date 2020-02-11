@@ -32,7 +32,7 @@ public enum SimplePrefs {
 	public typealias CacheProperties = CachePropertiesManager
 	public typealias UserDefaultsProperties = UserDefaultsPropertiesManager
 	
-	enum Properties {
+	public enum Properties {
 		public typealias Key = PropertyKey
 		public typealias Keys = [PropertyKeyProtocol]
 		public typealias KeysProtocol = AllPropertyKeys
