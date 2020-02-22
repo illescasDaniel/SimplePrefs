@@ -1,7 +1,7 @@
 # SimplePrefs
 
-[![Swift version](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org/download)
-[![Version](https://img.shields.io/badge/version-2.5-green.svg)](https://github.com/illescasDaniel/Questions/releases)
+[![Swift version](https://img.shields.io/badge/Swift-5-orange.svg)](https://swift.org/download)
+[![Version](https://img.shields.io/badge/version-2.5-green.svg)](https://github.com/illescasDaniel/SimplePrefs/releases)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/illescasDaniel/SimplePrefs/blob/master/LICENSE)
 
 A simple way to manage your app preferences in your Swift projects (compatible with iOS, macOS, etc).
@@ -50,10 +50,9 @@ struct UserPreferences: Codable {
 }
 
 // Only necessary for `SimplePrefs.UserDefaults`
-extension UserPreferences: UserDefaultsKey {
+extension UserPreferences: SimplePrefs.UserDefaultsKey {
     // It is recommended to use custom key values like these in order to save
-    // unique keys into userDefaults (in case you use the same user defaults suite for
-    // two different preferences)
+    // unique keys into userDefaults
     enum CodingKeys: String, CodingKey, CaseIterable {
         case age = "UserPreferences.age"
         case isDarkModeEnabled = "UserPreferences.isDarkModeEnabled"
