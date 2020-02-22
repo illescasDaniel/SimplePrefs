@@ -26,16 +26,31 @@ public protocol PreferencesManagerValue {
 }
 
 public protocol PreferencesManager: class, PreferencesManagerValue {
+	
 	func load() -> Bool
+	
 	func getProperty<T>(_ keyPath: KeyPath<Value,T>) -> T
 	func setProperty<T>(_ keyPath: WritableKeyPath<Value,T>, _ value: T)
+	
 	func save() -> Bool
+	
+	/// Deletes the saved properties of the underlying storage but It does NOT resets the internal value of this class to the default one.
+	/// For that, you may set the whole value to another one with: `[\.self] = newValue` or just use `deleteReplacing(with:)`
 	func delete() -> Bool
 }
 public extension PreferencesManager {
 	subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T {
 		get { getProperty(keyPath) }
 		set { setProperty(keyPath, newValue) }
+	}
+	
+	/// Deletes the saved properties of the underlying storage AND sets the internal value to the new one
+	func deleteReplacing(with newValue: Value) -> Bool {
+		if self.delete() {
+			self.setProperty(\.self, newValue)
+			return true
+		}
+		return false
 	}
 }
 

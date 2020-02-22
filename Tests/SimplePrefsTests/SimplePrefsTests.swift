@@ -7,6 +7,7 @@ import class Foundation.JSONSerialization
 import class Foundation.FileManager
 import struct Foundation.Data
 @testable import enum SimplePrefs.SimplePrefs
+@testable import protocol SimplePrefs.PreferencesManager
 
 final class SimplePrefsTests: XCTestCase {
 	
@@ -18,35 +19,8 @@ final class SimplePrefsTests: XCTestCase {
 	//
 	
 	func testFilePrefs() {
-		
 		let prefs = SimplePrefs.File<UserPreferences>(defaultValue: .init())
-		prefs.delete()
-		
-		// default values
-		XCTAssertEqual(prefs[\.age], nil)
-		XCTAssertEqual(prefs.getProperty(\.age), nil)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
-		XCTAssertEqual(prefs[\.person], Person(name: "John"))
-		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
-		
-		// new values
-		prefs[\.age] = newAge
-		prefs.setProperty(\.isDarkModeEnabled, isDark)
-		prefs[\.person] = person
-		prefs[\.car] = car
-		
-		// saving
-		XCTAssertTrue(prefs.save())
-		XCTAssertTrue(FileManager.default.fileExists(atPath: prefs.path))
-		
-		// loading and checking values
-		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs[\.age], newAge)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
-		XCTAssertEqual(prefs[\.person], person)
-		XCTAssertEqual(prefs[\.car], car)
-		
-		XCTAssertTrue(prefs.delete())
+		checkPrefs(prefs)
 	}
 	
 	func testEncryptedFilePrefs() {
@@ -56,33 +30,7 @@ final class SimplePrefsTests: XCTestCase {
 				defaultValue: .init(),
 				dataKey: Data("abcdefghijklmnopqrstuvwxyz123456".utf8)
 			)
-			prefs.delete()
-			
-			// default values
-			XCTAssertEqual(prefs[\.age], nil)
-			XCTAssertEqual(prefs.getProperty(\.age), nil)
-			XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
-			XCTAssertEqual(prefs[\.person], Person(name: "John"))
-			XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
-			
-			// new values
-			prefs[\.age] = newAge
-			prefs.setProperty(\.isDarkModeEnabled, isDark)
-			prefs[\.person] = person
-			prefs[\.car] = car
-			
-			// saving
-			XCTAssertTrue(prefs.save())
-			XCTAssertTrue(FileManager.default.fileExists(atPath: prefs.path))
-			
-			// loading and checking values
-			XCTAssertTrue(prefs.load())
-			XCTAssertEqual(prefs[\.age], newAge)
-			XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
-			XCTAssertEqual(prefs[\.person], person)
-			XCTAssertEqual(prefs[\.car], car)
-			
-			XCTAssertTrue(prefs.delete())
+			checkPrefs(prefs)
 		} else {
 			print("EncryptedFilePreferencesManager not compatible")
 		}
@@ -99,64 +47,15 @@ final class SimplePrefsTests: XCTestCase {
 			defaultValue: .init(),
 			key: "com.myname.simpleprefs.tests"
 		)
-		prefs.delete()
-		
-		// default values
-		XCTAssertEqual(prefs[\.age], nil)
-		XCTAssertEqual(prefs.getProperty(\.age), nil)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
-		XCTAssertEqual(prefs[\.person], Person(name: "John"))
-		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
-		
-		// new values
-		prefs[\.age] = newAge
-		prefs.setProperty(\.isDarkModeEnabled, isDark)
-		prefs[\.person] = person
-		prefs[\.car] = car
-		
-		// saving
-		XCTAssertTrue(prefs.save())
-		
-		// loading and checking values
-		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs[\.age], newAge)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
-		XCTAssertEqual(prefs[\.person], person)
-		XCTAssertEqual(prefs[\.car], car)
-		
-		XCTAssertTrue(prefs.delete())
+		checkPrefs(prefs)
 	}*/
 	
 	func testUserDefaultPrefs() {
-		
 		let prefs = SimplePrefs.UserDefaults<UserPreferences>(defaultValue: .init())
-		prefs.delete()
-		
-		// default values
-		XCTAssertEqual(prefs[\.age], nil)
-		XCTAssertEqual(prefs.getProperty(\.age), nil)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
-		XCTAssertEqual(prefs[\.person], Person(name: "John"))
-		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
-		
-		// new values
-		prefs[\.age] = newAge
-		prefs.setProperty(\.isDarkModeEnabled, isDark)
-		prefs[\.person] = person
-		prefs[\.car] = car
-		
-		// saving
-		XCTAssertTrue(prefs.save())
-		
-		// loading and checking values
-		XCTAssertTrue(prefs.load())
-		XCTAssertEqual(prefs[\.age], newAge)
-		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
-		XCTAssertEqual(prefs[\.person], person)
-		XCTAssertEqual(prefs[\.car], car)
-		
-		XCTAssertTrue(prefs.delete())
+		checkPrefs(prefs)
 	}
+	
+	//
 	
 	func testUserDefaultsProperties() {
 		
@@ -346,4 +245,64 @@ final class SimplePrefsTests: XCTestCase {
 		//("testKeychainPrefs", testKeychainPrefs),
 		("testRegisterDefaultsInUserDefaultPrefs", testRegisterDefaultsInUserDefaultPrefs)
 	]
+	
+	// Convenience
+	
+	private func checkPrefs<Manager>(_ prefs: Manager) where Manager: PreferencesManager, Manager.Value == UserPreferences {
+		
+		_ = prefs.delete()
+		
+		// default values
+		XCTAssertEqual(prefs[\.age], nil)
+		XCTAssertEqual(prefs.getProperty(\.age), nil)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
+		
+		// new values
+		prefs[\.age] = newAge
+		prefs.setProperty(\.isDarkModeEnabled, isDark)
+		prefs[\.person] = person
+		prefs[\.car] = car
+		
+		// saving
+		XCTAssertTrue(prefs.save())
+		
+		// loading and checking values
+		XCTAssertTrue(prefs.load())
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
+		
+		XCTAssertTrue(prefs.delete())
+		
+		// ~~~~
+		
+		// after deleting, it just deletes the "source" values, so the local ones stays the same
+		// as long as the manager preferences instance (the manager) is alive
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
+		
+		// set the values again
+		prefs[\.age] = newAge
+		prefs.setProperty(\.isDarkModeEnabled, isDark)
+		prefs[\.person] = person
+		prefs[\.car] = car
+		
+		XCTAssertTrue(prefs.save())
+		
+		// to actually reset the values you use `deleteReplacing(with:)`
+		// (you can also change the whole internal value by just using [\.self])
+		XCTAssertTrue(prefs.deleteReplacing(with: .init()))
+		
+		// default values
+		XCTAssertEqual(prefs[\.age], nil)
+		XCTAssertEqual(prefs.getProperty(\.age), nil)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
+		XCTAssertEqual(prefs[\.person], Person(name: "John"))
+		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
+	}
 }
