@@ -24,6 +24,7 @@ subscript<T>(keyPath: WritableKeyPath<Value,T>) -> T
 func save() -> Bool
 
 func delete() -> Bool
+func deleteReplacing(with newValue: Value) -> Bool
 ```
 
 ### Specific **preferences managers** available:
