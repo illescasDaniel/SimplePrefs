@@ -70,7 +70,7 @@ public final class UserDefaultsPreferencesManager<Value: CodableModelWithStringK
 			return false
 		}
                 Value.CodingKeys.allCases.forEach { key in
-			self.userDefaults.set(jsonDictionary[key], forKey: key.rawValue)
+			self.userDefaults.set(jsonDictionary[key.rawValue], forKey: key.rawValue)
 		}
 		return true
 	}
