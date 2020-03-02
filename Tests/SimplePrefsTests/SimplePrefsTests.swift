@@ -12,6 +12,7 @@ import struct Foundation.Data
 final class SimplePrefsTests: XCTestCase {
 	
 	let newAge: Int = 100
+	let newNilAge: Int? = nil
 	let isDark = true
 	let person = Person(name: "Daniel")
 	let car = Car(brand: "Mercedez", model: "F1", year: 3243)
@@ -268,8 +269,14 @@ final class SimplePrefsTests: XCTestCase {
 		// saving
 		XCTAssertTrue(prefs.save())
 		
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
+		
 		// loading and checking values
 		XCTAssertTrue(prefs.load())
+		
 		XCTAssertEqual(prefs[\.age], newAge)
 		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
 		XCTAssertEqual(prefs[\.person], person)
@@ -304,5 +311,44 @@ final class SimplePrefsTests: XCTestCase {
 		XCTAssertEqual(prefs[\.isDarkModeEnabled], false)
 		XCTAssertEqual(prefs[\.person], Person(name: "John"))
 		XCTAssertEqual(prefs[\.car], Car(brand: "Toyota", model: "Celica", year: 1970))
+		
+		// ~~~~~~
+		
+		// set the values again
+		prefs[\.age] = newAge
+		prefs.setProperty(\.isDarkModeEnabled, isDark)
+		prefs[\.person] = person
+		prefs[\.car] = car
+		
+		XCTAssertTrue(prefs.save())
+		
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
+		
+		XCTAssertTrue(prefs.load())
+		
+		XCTAssertEqual(prefs[\.age], newAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
+		
+		// checks saving a nil value
+		prefs[\.age] = newNilAge
+		
+		XCTAssertTrue(prefs.save())
+		
+		XCTAssertEqual(prefs[\.age], newNilAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
+		
+		XCTAssertTrue(prefs.load())
+		
+		XCTAssertEqual(prefs[\.age], newNilAge)
+		XCTAssertEqual(prefs[\.isDarkModeEnabled], isDark)
+		XCTAssertEqual(prefs[\.person], person)
+		XCTAssertEqual(prefs[\.car], car)
 	}
 }

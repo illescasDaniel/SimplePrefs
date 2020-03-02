@@ -69,7 +69,7 @@ public final class UserDefaultsPreferencesManager<Value: CodableModelWithStringK
 		guard let jsonDictionary = dictionary() else {
 			return false
 		}
-                Value.CodingKeys.allCases.forEach { key in
+		Value.CodingKeys.allCases.forEach { key in
 			self.userDefaults.set(jsonDictionary[key.rawValue], forKey: key.rawValue)
 		}
 		return true
